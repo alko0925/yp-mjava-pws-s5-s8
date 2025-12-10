@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: yp-mjava-pws-s5-s8
+
+  datasource:
+    url: jdbc:mysql://db-address:3306/test # URL подключения к БД
+    username: test # имя пользователя
+    password: test # пароль
+  sql:
+    init:
+      mode: always # для инициализации схемы с использованием schema.sql
