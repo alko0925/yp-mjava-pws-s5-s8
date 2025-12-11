@@ -4,7 +4,6 @@ spring:
 
   sql:
     init:
-      platform: postgresql
       mode: always
 
   datasource:
@@ -12,6 +11,12 @@ spring:
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
 
 #post:
 #  shorttext:
@@ -26,10 +31,6 @@ spring:
   config:
     activate:
       on-profile: isolation
-
-  sql:
-    init:
-      platform: h2
 
   datasource:
     url: jdbc:h2:mem:usersdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE

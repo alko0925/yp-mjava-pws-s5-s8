@@ -22,21 +22,16 @@ public class TransactionManagerService {
     public void transfer(Account source, Account target, BigDecimal amount) {
         // Открываем транзакцию с конфигурацией по умолчанию
         var transaction = transactionManager.getTransaction(TransactionDefinition.withDefaults());
-        try {
-            // Увеличиваем баланс получателя и сохраняем
-            target.setBalance(target.getBalance().add(amount));
-            accountRepository.save(target);
 
-            // Уменьшаем баланс отправителя и сохраняем
-            source.setBalance(source.getBalance().subtract(amount));
-            accountRepository.save(source);
+        // Увеличиваем баланс получателя и сохраняем
+        target.setBalance(target.getBalance().add(amount));
+        accountRepository.save(target);
 
-            // Подтверждаем коммит транзакции в случае отсутствия ошибок
-            transactionManager.commit(transaction);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Делаем откат в случае любой ошибки (например, отрицательный баланс отправителя)
-            transactionManager.rollback(transaction);
-        }
+        // Уменьшаем баланс отправителя и сохраняем
+        source.setBalance(source.getBalance().subtract(amount));
+        accountRepository.save(source);
+
+        // Подтверждаем коммит транзакции в случае отсутствия ошибок
+        transactionManager.commit(transaction);
     }
 }

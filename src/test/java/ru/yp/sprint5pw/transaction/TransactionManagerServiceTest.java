@@ -1,7 +1,9 @@
 package ru.yp.sprint5pw.transaction;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.yp.sprint5pw.MyMarketApplicationTest;
 import ru.yp.sprint5pw.entity.Account;
 import ru.yp.sprint5pw.repository.AccountRepository;
@@ -27,7 +29,11 @@ class TransactionManagerServiceTest extends MyMarketApplicationTest {
         var initialBalance = petr.getBalance();
 
         // Переводим от Василия Петру 100000 (возникает ошибка ограничения на баланс)
-        transactionManagerService.transfer(vasily, petr, BigDecimal.valueOf(100_000L));
+
+        Assertions.assertThrows(
+                DataIntegrityViolationException.class,
+                () -> transactionManagerService.transfer(vasily, petr, BigDecimal.valueOf(100_000L))
+        );
 
         // Проверяем, что транзакция откатилась. Не возникло ситуации, что Петру деньги начислились, а с Василия не списались
         assertThat(accountRepository.findAllById(List.of(petr.getId(), vasily.getId())))

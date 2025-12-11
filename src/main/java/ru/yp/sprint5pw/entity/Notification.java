@@ -1,11 +1,14 @@
 package ru.yp.sprint5pw.entity;
 
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "notification")
 public class Notification {
 
     @Id
-    private Long id; // Идентификатор, генерируется на уровне БД
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id; // Идентификатор, генерируется на уровне БД
     private String message; // Сообщение в уведомлении
 
     // No-args конструктор
@@ -17,11 +20,11 @@ public class Notification {
     }
 
     // Геттеры-сеттеры
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public Notification setId(Long id) {
+    public Notification setId(Integer id) {
         this.id = id;
         return this;
     }

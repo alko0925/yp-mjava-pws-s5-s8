@@ -1,12 +1,15 @@
 package ru.yp.sprint5pw.entity;
 
-import org.springframework.data.annotation.Id;
-
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
+@Entity
+@Table(name = "account")
 public class Account{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     private String name;
     private BigDecimal balance = BigDecimal.valueOf(10_000L);
 
