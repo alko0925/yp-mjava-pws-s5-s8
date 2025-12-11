@@ -1,14 +1,13 @@
 package ru.yp.sprint5pw.config;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
-import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 
-public final class MySqlTestcontainer {
+public final class PostgreSQLTestcontainer {
 
     @Container
     @ServiceConnection
-    static final MySQLContainer<?> mysqlContainer =
-        new MySQLContainer<>("mysql:8.0.28");
-
+    static final PostgreSQLContainer postgreSQLContainer =
+        new PostgreSQLContainer("postgres");
 }

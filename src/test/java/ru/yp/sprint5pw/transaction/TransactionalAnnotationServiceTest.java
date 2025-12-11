@@ -3,7 +3,7 @@ package ru.yp.sprint5pw.transaction;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.UncategorizedSQLException;
+import org.springframework.dao.DataIntegrityViolationException;
 import ru.yp.sprint5pw.MyMarketApplicationTest;
 import ru.yp.sprint5pw.entity.Account;
 import ru.yp.sprint5pw.repository.AccountRepository;
@@ -31,7 +31,7 @@ class TransactionalAnnotationServiceTest extends MyMarketApplicationTest {
 
         // Переводим от Василия Петру 100000 (возникает ошибка ограничения на баланс)
         Assertions.assertThrows(
-                UncategorizedSQLException.class,
+                DataIntegrityViolationException.class,
                 () -> transactionalAnnotationService.transfer(vasily, petr, BigDecimal.valueOf(100_000L))
         );
 

@@ -5,11 +5,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import ru.yp.sprint5pw.config.MySqlTestcontainer;
+import ru.yp.sprint5pw.config.PostgreSQLTestcontainer;
 
 @SpringBootTest
 @Testcontainers
-@ImportTestcontainers(MySqlTestcontainer.class)
+@ImportTestcontainers(PostgreSQLTestcontainer.class)
 @ActiveProfiles("test")
 public class MyMarketApplicationTest {
 

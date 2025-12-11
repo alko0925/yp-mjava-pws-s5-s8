@@ -39,10 +39,11 @@ public class NotificationDao {
         validateEntitiesHaveNoIds(notifications);
         var batchArguments = notifications.stream()
                 .map(
-                        it -> Map.of("message", it)
+                        it -> Map.of("message", it.getMessage())
                 ).toList()
                 .toArray(it -> new Map[0]);
         simpleJdbcInsert.withTableName("notification")
+                .usingColumns("message")
                 .executeBatch(batchArguments);
     }
 
