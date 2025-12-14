@@ -1,5 +1,6 @@
 package ru.yp.sprint5pw.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,13 +27,16 @@ public class ItemController {
                            @RequestParam(defaultValue = "NO") String sort,
                            @RequestParam(defaultValue = "1") Integer pageNumber,
                            @RequestParam(defaultValue = "5") Integer pageSize,
+                           @Value("${page.layout.rowsize}") Integer pageRowSize,
                            Model model) {
 
         PageParams pageParams = new PageParams(pageNumber, pageSize, false, false);
 
         Iterable<Product> products = productService.getAllProducts();
         List<List<ItemDto>> items = new ArrayList<>();
+        List<ItemDto> itemsInner = new ArrayList<>();
 
+        int i = 1;
         for (var p : products) {
             ItemDto item = new ItemDto();
             item.setId(p.getId());
@@ -41,7 +45,22 @@ public class ItemController {
             item.setImgPath(p.getImgPath());
             item.setPrice(p.getPrice());
             item.setCount(0);
-            items.add(List.of(item));
+            itemsInner.add(item);
+
+            if (i == pageRowSize) {
+                items.add(itemsInner);
+                itemsInner = new ArrayList<>();
+                i = 1;
+            } else i++;
+        }
+
+        if (!itemsInner.isEmpty()) {
+            while (itemsInner.size() < pageRowSize) {
+                ItemDto item = new ItemDto();
+                item.setId(-1);
+                itemsInner.add(item);
+            }
+            items.add(itemsInner);
         }
 
         model.addAttribute("items", items);

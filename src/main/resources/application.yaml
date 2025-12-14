@@ -18,12 +18,12 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: false
 
-#post:
-#  shorttext:
-#    size: 128
+page:
+  layout:
+    rowsize: 4
 
 server:
-  port: 8085
+  port: 8080
 
 ---
 
