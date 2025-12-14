@@ -9,4 +9,6 @@ public interface ProductService {
     Iterable<Product> getAllProducts();
     List<Product> getProducts(String search, String sort, PageParams pageParams);
     Product getProduct(Integer itemId);
+    Product create(Product product);
+    void update(Product product);
 }
