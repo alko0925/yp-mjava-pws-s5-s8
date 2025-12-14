@@ -106,4 +106,42 @@ public class ItemController {
                 "&pageSize=" +
                 pageSize;
     }
+
+    @GetMapping(value = "/{item_id}")
+    public String getItem(@PathVariable("item_id") Integer item_id,
+                          Model model) {
+
+        Cart cart = cartService.getCartByUserId(1);
+        Product p = productService.getProduct(item_id);
+
+        ItemDto item = new ItemDto();
+        item.setId(p.getId());
+        item.setTitle(p.getTitle());
+        item.setDescription(p.getDescription());
+        item.setImgPath(p.getImgPath());
+        item.setPrice(p.getPrice());
+        if (cart != null) {
+            CartProduct cartProduct = cart.getCartProducts().stream()
+                    .filter(cp -> cp.getProduct().getId().equals(p.getId()))
+                    .findFirst().orElse(null);
+            if (cartProduct != null) item.setCount(cartProduct.getQuantity());
+            else item.setCount(0);
+        } else item.setCount(0);
+
+        model.addAttribute("item", item);
+
+        return "item";
+    }
+
+    @PostMapping(value = "/{item_id}")
+    public String applyActionToItem(@PathVariable("item_id") Integer item_id,
+                                    @RequestParam("action") String action) {
+
+        Product p = productService.getProduct(item_id);
+        if (ActionType.MINUS.toString().equals(action)) cartService.decreaseProductCount(1, p);
+        if (ActionType.PLUS.toString().equals(action)) cartService.increaseProductCount(1, p);
+
+        return "redirect:/items/" +
+                item_id;
+    }
 }
