@@ -5,7 +5,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.yp.sprint5pw.controller.dto.ItemDto;
 import ru.yp.sprint5pw.model.Cart;
-
+import ru.yp.sprint5pw.model.Product;
 import ru.yp.sprint5pw.service.CartService;
 import ru.yp.sprint5pw.service.ProductService;
 
@@ -50,5 +50,20 @@ public class CartController {
         model.addAttribute("total", total);
 
         return "cart";
+    }
+
+    @PostMapping(value = "/items")
+    public String applyActionToItem(@RequestParam("id") Integer item_id,
+                                    @RequestParam("action") String action) {
+
+        Product p = productService.getProduct(item_id);
+
+        switch (ActionType.valueOf(action)) {
+            case  MINUS -> cartService.decreaseProductCount(1, p);
+            case  PLUS -> cartService.increaseProductCount(1, p);
+            case  DELETE -> cartService.deleteProduct(1, p);
+        };
+
+        return "redirect:/cart/items";
     }
 }
