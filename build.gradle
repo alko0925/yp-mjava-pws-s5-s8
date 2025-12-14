@@ -34,3 +34,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+bootJar {
+	destinationDirectory = file('docker-compose/app')
+	launchScript()
+}
