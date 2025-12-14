@@ -9,4 +9,6 @@ import ru.yp.sprint5pw.model.Product;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+    @Query(value = "SELECT p FROM Product p WHERE LOWER(p.title) LIKE ?1 OR LOWER(p.description) LIKE ?1")
+    Page<Product> findProductsWithCriterias(String search, Pageable pageable);
 }

@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface ProductService {
     Iterable<Product> getAllProducts();
+    List<Product> getProducts(String search, String sort, PageParams pageParams);
 }

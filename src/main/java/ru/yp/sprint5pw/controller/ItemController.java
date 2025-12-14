@@ -32,7 +32,7 @@ public class ItemController {
 
         PageParams pageParams = new PageParams(pageNumber, pageSize, false, false);
 
-        Iterable<Product> products = productService.getAllProducts();
+        Iterable<Product> products = productService.getProducts(search, sort, pageParams);
         List<List<ItemDto>> items = new ArrayList<>();
         List<ItemDto> itemsInner = new ArrayList<>();
 
