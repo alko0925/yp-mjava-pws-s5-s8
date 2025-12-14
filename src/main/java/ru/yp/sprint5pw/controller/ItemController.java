@@ -6,7 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.yp.sprint5pw.controller.dto.ItemDto;
 import ru.yp.sprint5pw.controller.dto.PageParams;
+import ru.yp.sprint5pw.model.Cart;
+import ru.yp.sprint5pw.model.CartProduct;
 import ru.yp.sprint5pw.model.Product;
+import ru.yp.sprint5pw.service.CartService;
 import ru.yp.sprint5pw.service.ProductService;
 
 import java.util.ArrayList;
@@ -17,9 +20,12 @@ import java.util.List;
 public class ItemController {
 
     private final ProductService productService;
+    private final CartService cartService;
 
-    public ItemController(ProductService productService) {
+
+    public ItemController(ProductService productService, CartService cartService) {
         this.productService = productService;
+        this.cartService = cartService;
     }
 
     @GetMapping
@@ -36,6 +42,8 @@ public class ItemController {
         List<List<ItemDto>> items = new ArrayList<>();
         List<ItemDto> itemsInner = new ArrayList<>();
 
+        Cart cart = cartService.getCartByUserId(1);
+
         int i = 1;
         for (var p : products) {
             ItemDto item = new ItemDto();
@@ -44,7 +52,13 @@ public class ItemController {
             item.setDescription(p.getDescription());
             item.setImgPath(p.getImgPath());
             item.setPrice(p.getPrice());
-            item.setCount(0);
+            if (cart != null) {
+                CartProduct cartProduct = cart.getCartProducts().stream()
+                        .filter(cp -> cp.getProduct().getId().equals(p.getId()))
+                        .findFirst().orElse(null);
+                if (cartProduct != null) item.setCount(cartProduct.getQuantity());
+                else item.setCount(0);
+            } else item.setCount(0);
             itemsInner.add(item);
 
             if (i == pageRowSize) {
@@ -69,5 +83,27 @@ public class ItemController {
         model.addAttribute("paging", pageParams);
 
         return "items";
+    }
+
+    @PostMapping
+    public String applyActionToItems(@RequestParam("id") Integer item_id,
+                                     @RequestParam(defaultValue = "") String search,
+                                     @RequestParam(defaultValue = "NO") String sort,
+                                     @RequestParam(defaultValue = "1") Integer pageNumber,
+                                     @RequestParam(defaultValue = "5") Integer pageSize,
+                                     @RequestParam("action") String action) {
+
+        Product p = productService.getProduct(item_id);
+        if (ActionType.MINUS.toString().equals(action)) cartService.decreaseProductCount(1, p);
+        if (ActionType.PLUS.toString().equals(action)) cartService.increaseProductCount(1, p);
+
+        return "redirect:/items?search=" +
+                search +
+                "&sort=" +
+                sort +
+                "&pageNumber=" +
+                pageNumber +
+                "&pageSize=" +
+                pageSize;
     }
 }

@@ -63,4 +63,9 @@ public class ProductServiceImpl implements ProductService {
 
         return page.getContent();
     }
+
+    @Override
+    public Product getProduct(Integer itemId) {
+        return productRepository.findById(itemId).orElseThrow(() -> new NoSuchElementException("Product not found"));
+    }
 }
