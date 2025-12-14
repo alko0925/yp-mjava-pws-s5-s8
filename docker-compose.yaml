@@ -1,0 +1,54 @@
+services:
+  yp-db:
+    container_name: yp-db
+    build:
+      context: ./docker-compose/postgresql-db
+      dockerfile: Dockerfile
+    image: yp-db
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      - POSTGRES_USER=yp_user
+      - POSTGRES_PASSWORD=yp_pwd
+      - POSTGRES_DB=yp_db
+
+  yp-pgadmin:
+    container_name: yp-pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=yp_user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=pga_pwd
+    depends_on:
+      - yp-db
+      
+  yp-app:
+    container_name: yp-app
+    build:
+      context: ./docker-compose/app
+      dockerfile: Dockerfile
+    image: yp-app
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=yp_user
+      - POSTGRES_PASSWORD=yp_pwd
+      - DB_HOST=yp-db
+      - DB_PORT=5432
+      - DB_NAME=yp_db
+#      - spring.profiles.active=isolation
+    ports:
+      - "8080:8080"
+    depends_on:
+      - yp-pgadmin
+      
+  yp-gw:
+    container_name: yp-gw
+    build:
+      context: ./docker-compose/nginx
+      dockerfile: Dockerfile
+    image: yp-gw
+    ports:
+      - "80:80"
+    depends_on:
+      - yp-app
