@@ -97,4 +97,9 @@ public class CartServiceImpl implements CartService {
         if (cart.getCartProducts().isEmpty()) cartRepository.delete(cart);
         else cartRepository.save(cart);
     }
+
+    @Override
+    public void delete(Cart cart) {
+        cartRepository.delete(cart);
+    }
 }

@@ -3,14 +3,10 @@ package ru.yp.sprint5pw.service;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import ru.yp.sprint5pw.model.Cart;
-import ru.yp.sprint5pw.model.CartProduct;
 import ru.yp.sprint5pw.model.Order;
 import ru.yp.sprint5pw.model.OrderProduct;
-import ru.yp.sprint5pw.repository.CartProductRepository;
 import ru.yp.sprint5pw.repository.OrderProductRepository;
 import ru.yp.sprint5pw.repository.OrderRepository;
-import ru.yp.sprint5pw.repository.ProductRepository;
-
 import java.util.NoSuchElementException;
 
 @Service
@@ -33,5 +29,20 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order getOrder(Integer orderId) {
         return orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order not found"));
+    }
+
+    @Override
+    public Order create(Cart cart) {
+        Order order = new Order();
+        order.setUserId(cart.getUserId());
+        orderRepository.save(order);
+
+        for(var cp : cart.getCartProducts()){
+            OrderProduct orderProduct = new OrderProduct(order, cp.getProduct(), cp.getQuantity());
+            orderProductRepository.save(orderProduct);
+            order.getOrderProducts().add(orderProduct);
+        }
+
+        return orderRepository.save(order);
     }
 }
