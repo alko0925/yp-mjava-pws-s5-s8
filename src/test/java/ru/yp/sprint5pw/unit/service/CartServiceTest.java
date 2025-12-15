@@ -70,4 +70,66 @@ class CartServiceTest extends MyMarketApplicationTest {
         verify(cartRepository, times(1)).findCartByUserId(userId);
         verify(cartRepository, times(1)).save(cart);
     }
+
+    @Test
+    void testIncreaseProductCount() {
+        Integer userId = 1;
+        Cart cart = new Cart();
+        cart.setUserId(userId);
+
+        Product p1 = new Product(1, "Prod1", "", "", 1000L);
+        Product p2 = new Product(2, "Prod2", "", "", 2000L);
+
+        CartProduct cp1 = new CartProduct(cart, p1, 3);
+        CartProduct cp2 = new CartProduct(cart, p2, 1);
+
+        cart.getCartProducts().add(cp1);
+
+        doReturn(cart).when(cartRepository).findCartByUserId(userId);
+        doReturn(cp2).when(cartProductRepository).save(cp2);
+        cartService.increaseProductCount(userId, p2);
+
+        assertEquals(2, cart.getCartProducts().size(), "New product was not added to cart");
+        assertEquals(1, cart.getCartProducts().get(1).getQuantity(), "Quantity was not increased properly");
+
+        verify(cartRepository, times(1)).findCartByUserId(userId);
+        verify(cartProductRepository, times(1)).save(cp2);
+        verify(cartRepository, times(1)).save(cart);
+    }
+
+    @Test
+    void testDeleteProduct() {
+        Integer userId = 1;
+        Cart cart = new Cart();
+        cart.setUserId(userId);
+
+        Product p1 = new Product(1, "Prod1", "", "", 1000L);
+        Product p2 = new Product(2, "Prod2", "", "", 2000L);
+
+        CartProduct cp1 = new CartProduct(cart, p1, 3);
+        CartProduct cp2 = new CartProduct(cart, p2, 2);
+
+        cart.getCartProducts().add(cp1);
+        cart.getCartProducts().add(cp2);
+
+        doReturn(cart).when(cartRepository).findCartByUserId(userId);
+        cartService.deleteProduct(userId, p1);
+
+        assertEquals(1, cart.getCartProducts().size(), "Product was not deleted from cart");
+
+        verify(cartRepository, times(1)).findCartByUserId(userId);
+        verify(cartProductRepository, times(1)).delete(cp1);
+        verify(cartRepository, times(1)).save(cart);
+    }
+
+    @Test
+    void testDelete() {
+        Integer userId = 1;
+        Cart cart = new Cart();
+        cart.setUserId(userId);
+
+        cartService.delete(cart);
+
+        verify(cartRepository, times(1)).delete(cart);
+    }
 }
