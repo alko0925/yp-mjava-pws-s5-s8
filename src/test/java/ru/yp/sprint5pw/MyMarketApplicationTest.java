@@ -13,7 +13,4 @@ import ru.yp.sprint5pw.config.PostgreSQLTestcontainer;
 @ActiveProfiles("test")
 public class MyMarketApplicationTest {
 
-    @Test
-    void contextLoads() {
-    }
 }
