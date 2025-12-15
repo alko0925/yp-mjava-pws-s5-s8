@@ -7,6 +7,8 @@ import ru.yp.sprint5pw.model.Order;
 import ru.yp.sprint5pw.model.OrderProduct;
 import ru.yp.sprint5pw.repository.OrderProductRepository;
 import ru.yp.sprint5pw.repository.OrderRepository;
+
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -22,7 +24,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Iterable<Order> getAllOrders() {
+    public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 

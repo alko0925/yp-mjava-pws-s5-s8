@@ -29,7 +29,7 @@ public class OrderController {
     @GetMapping
     public String getOrders(Model model) {
 
-        Iterable<Order> orders = orderService.getAllOrders();
+        List<Order> orders = orderService.getAllOrders();
         List<OrderDto> ordersDto = new ArrayList<>();
 
         for (var o : orders) {
