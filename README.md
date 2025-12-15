@@ -16,13 +16,13 @@ Practical work for yp - sprint 5.
 
 ### После деплоя можно проверять функциональность:
 
-[!screenshot 1](https://github.com/alko0925/yp-mjava-pws/tree/module_two_sprint_five_branch/images/s5_pw_1.png)   
-[!screenshot 2](https://github.com/alko0925/yp-mjava-pws/tree/module_two_sprint_five_branch/images/s5_pw_2.png)   
-[!screenshot 3](https://github.com/alko0925/yp-mjava-pws/tree/module_two_sprint_five_branch/images/s5_pw_3.png)   
-[!screenshot 4](https://github.com/alko0925/yp-mjava-pws/tree/module_two_sprint_five_branch/images/s5_pw_4.png)   
-[!screenshot 5](https://github.com/alko0925/yp-mjava-pws/tree/module_two_sprint_five_branch/images/s5_pw_5.png)   
-[!screenshot 6](https://github.com/alko0925/yp-mjava-pws/tree/module_two_sprint_five_branch/images/s5_pw_6.png)   
-[!screenshot 7](https://github.com/alko0925/yp-mjava-pws/tree/module_two_sprint_five_branch/images/s5_pw_7.png)   
+[!screenshot 1](https://github.com/alko0925/yp-mjava-pws-s5-s8/tree/module_two_sprint_five_branch/images/s5_pw_1.png)   
+[!screenshot 2](https://github.com/alko0925/yp-mjava-pws-s5-s8/tree/module_two_sprint_five_branch/images/s5_pw_2.png)   
+[!screenshot 3](https://github.com/alko0925/yp-mjava-pws-s5-s8/tree/module_two_sprint_five_branch/images/s5_pw_3.png)   
+[!screenshot 4](https://github.com/alko0925/yp-mjava-pws-s5-s8/tree/module_two_sprint_five_branch/images/s5_pw_4.png)   
+[!screenshot 5](https://github.com/alko0925/yp-mjava-pws-s5-s8/tree/module_two_sprint_five_branch/images/s5_pw_5.png)   
+[!screenshot 6](https://github.com/alko0925/yp-mjava-pws-s5-s8/tree/module_two_sprint_five_branch/images/s5_pw_6.png)   
+[!screenshot 7](https://github.com/alko0925/yp-mjava-pws-s5-s8/tree/module_two_sprint_five_branch/images/s5_pw_7.png)   
 
 ### Дополнения:
 1. Функциональность - пункт 9: реализовано здесь: **/product/add**
