@@ -6,7 +6,7 @@ plugins {
 
 group = 'ru.yp'
 version = '0.0.1-SNAPSHOT'
-description = 'Practical work for yp - sprint 5.'
+description = 'Practical work for yp - sprint 6.'
 
 java {
 	toolchain {
