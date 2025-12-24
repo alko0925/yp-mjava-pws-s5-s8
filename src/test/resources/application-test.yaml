@@ -1,9 +1,4 @@
 logging:
   level:
-    org:
-      springframework:
-        jdbc:
-          core:
-            JdbcTemplate: DEBUG
-          support:
-            JdbcTransactionManager: DEBUG
+    org.springframework.r2dbc.core.DefaultDatabaseClient: DEBUG
+    io.r2dbc: DEBUG
