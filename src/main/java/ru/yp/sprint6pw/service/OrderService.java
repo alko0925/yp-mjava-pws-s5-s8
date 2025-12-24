@@ -6,7 +6,7 @@ import ru.yp.sprint6pw.model.Order;
 import java.util.List;
 
 public interface OrderService {
-    List<Order> getAllOrders();
-    Order getOrder(Integer orderId);
-    Order create(Cart cart);
+//    List<Order> getAllOrders();
+//    Order getOrder(Integer orderId);
+//    Order create(Cart cart);
 }

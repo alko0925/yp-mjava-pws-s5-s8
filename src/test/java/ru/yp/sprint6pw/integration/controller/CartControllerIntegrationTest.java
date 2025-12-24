@@ -11,22 +11,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class CartControllerIntegrationTest extends MyMarketApplicationWebTest {
 
-    @Test
-    void getItems_returnsViewCart() throws Exception {
-        mockMvc.perform(get("/cart/items"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("text/html;charset=UTF-8"))
-                .andExpect(view().name("cart"))
-                .andExpect(model().attributeExists("items"))
-                .andExpect(model().attribute("items", hasSize(2)))
-                .andExpect(model().attributeExists("total"));
-    }
+//    @Test
+//    void getItems_returnsViewCart() throws Exception {
+//        mockMvc.perform(get("/cart/items"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType("text/html;charset=UTF-8"))
+//                .andExpect(view().name("cart"))
+//                .andExpect(model().attributeExists("items"))
+//                .andExpect(model().attribute("items", hasSize(2)))
+//                .andExpect(model().attributeExists("total"));
+//    }
 
-    @Test
-    void applyPlusActionToItems_returnsRedirectToCartItems() throws Exception {
-        Integer productId = productRepository.findAll(Sort.by("id").descending()).getFirst().getId();
-        mockMvc.perform(post("/cart/items?id=" + productId + "&action=PLUS"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/cart/items"));
-    }
+//    @Test
+//    void applyPlusActionToItems_returnsRedirectToCartItems() throws Exception {
+//        Integer productId = productRepository.findAll(Sort.by("id").descending()).getFirst().getId();
+//        mockMvc.perform(post("/cart/items?id=" + productId + "&action=PLUS"))
+//                .andExpect(status().is3xxRedirection())
+//                .andExpect(redirectedUrl("/cart/items"));
+//    }
 }

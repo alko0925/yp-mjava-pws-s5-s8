@@ -23,59 +23,59 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
 
-    @Override
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
+//    @Override
+//    public List<Product> getAllProducts() {
+//        return productRepository.findAll();
+//    }
 
-    @Override
-    public List<Product> getProducts(String search, String sort, PageParams pageParams) {
+//    @Override
+//    public List<Product> getProducts(String search, String sort, PageParams pageParams) {
+//
+//        Pageable pageRequest;
+//
+//        if (SortType.NO.toString().equals(sort)) {
+//            pageRequest = PageRequest.of(pageParams.getPageNumber() - 1,
+//                    pageParams.getPageSize());
+//        } else {
+//            String sortCriteria = SortType.ALPHA.toString().equals(sort) ? "title" : "price";
+//            pageRequest = PageRequest.of(pageParams.getPageNumber() - 1,
+//                    pageParams.getPageSize(),
+//                    Sort.by(sortCriteria));
+//        }
+//
+//        Page<Product> page = productRepository.findProductsWithCriterias(("%" + search + "%").toLowerCase(), pageRequest);
+//
+//        if (page.getTotalPages() <= 1) {
+//            pageParams.setHasPrevious(false);
+//            pageParams.setHasNext(false);
+//        } else {
+//            if (pageParams.getPageNumber() == 1) {
+//                pageParams.setHasPrevious(false);
+//                pageParams.setHasNext(true);
+//            } else if (pageParams.getPageNumber() < page.getTotalPages()) {
+//                pageParams.setHasPrevious(true);
+//                pageParams.setHasNext(true);
+//            } else {
+//                pageParams.setHasPrevious(true);
+//                pageParams.setHasNext(false);
+//            }
+//        }
+//
+//        return page.getContent();
+//    }
 
-        Pageable pageRequest;
+//    @Override
+//    public Product getProduct(Integer itemId) {
+//        return productRepository.findById(itemId).orElseThrow(() -> new NoSuchElementException("Product not found"));
+//    }
 
-        if (SortType.NO.toString().equals(sort)) {
-            pageRequest = PageRequest.of(pageParams.getPageNumber() - 1,
-                    pageParams.getPageSize());
-        } else {
-            String sortCriteria = SortType.ALPHA.toString().equals(sort) ? "title" : "price";
-            pageRequest = PageRequest.of(pageParams.getPageNumber() - 1,
-                    pageParams.getPageSize(),
-                    Sort.by(sortCriteria));
-        }
+//    @Override
+//    public Product create(Product product) {
+//        return productRepository.save(product);
+//    }
 
-        Page<Product> page = productRepository.findProductsWithCriterias(("%" + search + "%").toLowerCase(), pageRequest);
-
-        if (page.getTotalPages() <= 1) {
-            pageParams.setHasPrevious(false);
-            pageParams.setHasNext(false);
-        } else {
-            if (pageParams.getPageNumber() == 1) {
-                pageParams.setHasPrevious(false);
-                pageParams.setHasNext(true);
-            } else if (pageParams.getPageNumber() < page.getTotalPages()) {
-                pageParams.setHasPrevious(true);
-                pageParams.setHasNext(true);
-            } else {
-                pageParams.setHasPrevious(true);
-                pageParams.setHasNext(false);
-            }
-        }
-
-        return page.getContent();
-    }
-
-    @Override
-    public Product getProduct(Integer itemId) {
-        return productRepository.findById(itemId).orElseThrow(() -> new NoSuchElementException("Product not found"));
-    }
-
-    @Override
-    public Product create(Product product) {
-        return productRepository.save(product);
-    }
-
-    @Override
-    public void update(Product product) {
-        productRepository.save(product);
-    }
+//    @Override
+//    public void update(Product product) {
+//        productRepository.save(product);
+//    }
 }

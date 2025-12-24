@@ -23,28 +23,28 @@ public class OrderServiceImpl implements OrderService {
         this.orderProductRepository = orderProductRepository;
     }
 
-    @Override
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
-    }
+//    @Override
+//    public List<Order> getAllOrders() {
+//        return orderRepository.findAll();
+//    }
 
-    @Override
-    public Order getOrder(Integer orderId) {
-        return orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order not found"));
-    }
+//    @Override
+//    public Order getOrder(Integer orderId) {
+//        return orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order not found"));
+//    }
 
-    @Override
-    public Order create(Cart cart) {
-        Order order = new Order();
-        order.setUserId(cart.getUserId());
-        orderRepository.save(order);
-
-        for(var cp : cart.getCartProducts()){
-            OrderProduct orderProduct = new OrderProduct(order, cp.getProduct(), cp.getQuantity());
-            orderProductRepository.save(orderProduct);
-            order.getOrderProducts().add(orderProduct);
-        }
-
-        return orderRepository.save(order);
-    }
+//    @Override
+//    public Order create(Cart cart) {
+//        Order order = new Order();
+//        order.setUserId(cart.getUserId());
+//        orderRepository.save(order);
+//
+//        for(var cp : cart.getCartProducts()){
+//            OrderProduct orderProduct = new OrderProduct(order, cp.getProduct(), cp.getQuantity());
+//            orderProductRepository.save(orderProduct);
+//            order.getOrderProducts().add(orderProduct);
+//        }
+//
+//        return orderRepository.save(order);
+//    }
 }

@@ -30,44 +30,44 @@ public class OrderServiceTest extends MyMarketApplicationTest {
     @Autowired
     private OrderService orderService;
 
-    @BeforeEach
-    void resetMocks() {
-        reset(orderRepository, orderProductRepository);
-    }
+//    @BeforeEach
+//    void resetMocks() {
+//        reset(orderRepository, orderProductRepository);
+//    }
 
-    @Test
-    void testGetAllOrders() {
-        Integer userId = 1;
-        Order o1 = new Order();
-        Order o2 = new Order();
+//    @Test
+//    void testGetAllOrders() {
+//        Integer userId = 1;
+//        Order o1 = new Order();
+//        Order o2 = new Order();
+//
+//        List<Order> orders = new ArrayList<>();
+//        orders.add(o1);
+//        orders.add(o2);
+//
+//        doReturn(orders).when(orderRepository).findAll();
+//        List<Order> result = orderService.getAllOrders();
+//
+//        assertNotNull(result, "Order list should not be null");
+//
+//        assertEquals(orders.size(), result.size(), "Wrong size of retrieved Orders list");
+//        verify(orderRepository, times(1)).findAll();
+//    }
 
-        List<Order> orders = new ArrayList<>();
-        orders.add(o1);
-        orders.add(o2);
-
-        doReturn(orders).when(orderRepository).findAll();
-        List<Order> result = orderService.getAllOrders();
-
-        assertNotNull(result, "Order list should not be null");
-
-        assertEquals(orders.size(), result.size(), "Wrong size of retrieved Orders list");
-        verify(orderRepository, times(1)).findAll();
-    }
-
-    @Test
-    void testGetOrder() {
-        Integer orderId = 10;
-        Integer userId = 1;
-        Order o1 = new Order();
-        o1.setId(orderId);
-        o1.setUserId(userId);
-
-        doReturn(Optional.of(o1)).when(orderRepository).findById(orderId);
-        Order result = orderService.getOrder(orderId);
-
-        assertNotNull(result, "Order was not found");
-
-        assertEquals(orderId, result.getId(), "Wrong size of retrieved Orders list");
-        verify(orderRepository, times(1)).findById(orderId);
-    }
+//    @Test
+//    void testGetOrder() {
+//        Integer orderId = 10;
+//        Integer userId = 1;
+//        Order o1 = new Order();
+//        o1.setId(orderId);
+//        o1.setUserId(userId);
+//
+//        doReturn(Optional.of(o1)).when(orderRepository).findById(orderId);
+//        Order result = orderService.getOrder(orderId);
+//
+//        assertNotNull(result, "Order was not found");
+//
+//        assertEquals(orderId, result.getId(), "Wrong size of retrieved Orders list");
+//        verify(orderRepository, times(1)).findById(orderId);
+//    }
 }

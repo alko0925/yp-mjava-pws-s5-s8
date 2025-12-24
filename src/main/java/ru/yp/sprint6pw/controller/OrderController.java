@@ -26,57 +26,57 @@ public class OrderController {
         this.cartService = cartService;
     }
 
-    @GetMapping
-    public String getOrders(Model model) {
+//    @GetMapping
+//    public String getOrders(Model model) {
+//
+//        List<Order> orders = orderService.getAllOrders();
+//        List<OrderDto> ordersDto = new ArrayList<>();
+//
+//        for (var o : orders) {
+//            OrderDto orderDto = new OrderDto();
+//            orderDto.setId(o.getId());
+//            for (var op : o.getOrderProducts()) {
+//                ItemDto item = new ItemDto();
+//                item.setId(op.getProduct().getId());
+//                item.setTitle(op.getProduct().getTitle());
+//                item.setDescription(op.getProduct().getDescription());
+//                item.setImgPath(op.getProduct().getImgPath());
+//                item.setPrice(op.getProduct().getPrice());
+//                item.setCount(op.getQuantity());
+//                orderDto.getItems().add(item);
+//            }
+//            orderDto.setTotalSum(o.getTotalOrderPrice());
+//            ordersDto.add(orderDto);
+//        }
+//
+//        model.addAttribute("orders", ordersDto);
+//
+//        return "orders";
+//    }
 
-        List<Order> orders = orderService.getAllOrders();
-        List<OrderDto> ordersDto = new ArrayList<>();
-
-        for (var o : orders) {
-            OrderDto orderDto = new OrderDto();
-            orderDto.setId(o.getId());
-            for (var op : o.getOrderProducts()) {
-                ItemDto item = new ItemDto();
-                item.setId(op.getProduct().getId());
-                item.setTitle(op.getProduct().getTitle());
-                item.setDescription(op.getProduct().getDescription());
-                item.setImgPath(op.getProduct().getImgPath());
-                item.setPrice(op.getProduct().getPrice());
-                item.setCount(op.getQuantity());
-                orderDto.getItems().add(item);
-            }
-            orderDto.setTotalSum(o.getTotalOrderPrice());
-            ordersDto.add(orderDto);
-        }
-
-        model.addAttribute("orders", ordersDto);
-
-        return "orders";
-    }
-
-    @GetMapping(value = "/{order_id}")
-    public String getOrder(@PathVariable("order_id") Integer orderId,
-                           @RequestParam(defaultValue = "false") Boolean newOrder,
-                           Model model) {
-
-        Order order = orderService.getOrder(orderId);
-        OrderDto orderDto = new OrderDto();
-        orderDto.setId(order.getId());
-        for (var op : order.getOrderProducts()) {
-            ItemDto item = new ItemDto();
-            item.setId(op.getProduct().getId());
-            item.setTitle(op.getProduct().getTitle());
-            item.setDescription(op.getProduct().getDescription());
-            item.setImgPath(op.getProduct().getImgPath());
-            item.setPrice(op.getProduct().getPrice());
-            item.setCount(op.getQuantity());
-            orderDto.getItems().add(item);
-        }
-        orderDto.setTotalSum(order.getTotalOrderPrice());
-
-        model.addAttribute("order", orderDto);
-        model.addAttribute("newOrder", newOrder);
-
-        return "order";
-    }
+//    @GetMapping(value = "/{order_id}")
+//    public String getOrder(@PathVariable("order_id") Integer orderId,
+//                           @RequestParam(defaultValue = "false") Boolean newOrder,
+//                           Model model) {
+//
+//        Order order = orderService.getOrder(orderId);
+//        OrderDto orderDto = new OrderDto();
+//        orderDto.setId(order.getId());
+//        for (var op : order.getOrderProducts()) {
+//            ItemDto item = new ItemDto();
+//            item.setId(op.getProduct().getId());
+//            item.setTitle(op.getProduct().getTitle());
+//            item.setDescription(op.getProduct().getDescription());
+//            item.setImgPath(op.getProduct().getImgPath());
+//            item.setPrice(op.getProduct().getPrice());
+//            item.setCount(op.getQuantity());
+//            orderDto.getItems().add(item);
+//        }
+//        orderDto.setTotalSum(order.getTotalOrderPrice());
+//
+//        model.addAttribute("order", orderDto);
+//        model.addAttribute("newOrder", newOrder);
+//
+//        return "order";
+//    }
 }

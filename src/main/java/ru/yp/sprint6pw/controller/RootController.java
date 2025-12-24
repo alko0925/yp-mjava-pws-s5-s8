@@ -24,30 +24,30 @@ public class RootController {
         this.cartService = cartService;
     }
 
-    @GetMapping
-    public String getItems(@RequestParam(defaultValue = "") String search,
-                           @RequestParam(defaultValue = "NO") String sort,
-                           @RequestParam(defaultValue = "1") Integer pageNumber,
-                           @RequestParam(defaultValue = "5") Integer pageSize) {
+//    @GetMapping
+//    public String getItems(@RequestParam(defaultValue = "") String search,
+//                           @RequestParam(defaultValue = "NO") String sort,
+//                           @RequestParam(defaultValue = "1") Integer pageNumber,
+//                           @RequestParam(defaultValue = "5") Integer pageSize) {
+//
+//        return "redirect:/items?search=" +
+//                search +
+//                "&sort=" +
+//                sort +
+//                "&pageNumber=" +
+//                pageNumber +
+//                "&pageSize=" +
+//                pageSize;
+//    }
 
-        return "redirect:/items?search=" +
-                search +
-                "&sort=" +
-                sort +
-                "&pageNumber=" +
-                pageNumber +
-                "&pageSize=" +
-                pageSize;
-    }
-
-    @PostMapping(value = "/buy")
-    public String submitOrder() {
-        Cart cart = cartService.getCartByUserId(1);
-        if (cart == null) throw new NoSuchElementException("Cart not found");
-        Order order = orderService.create(cart);
-        cartService.delete(cart);
-        return "redirect:/orders/" +
-                order.getId() +
-                "?newOrder=true";
-    }
+//    @PostMapping(value = "/buy")
+//    public String submitOrder() {
+//        Cart cart = cartService.getCartByUserId(1);
+//        if (cart == null) throw new NoSuchElementException("Cart not found");
+//        Order order = orderService.create(cart);
+//        cartService.delete(cart);
+//        return "redirect:/orders/" +
+//                order.getId() +
+//                "?newOrder=true";
+//    }
 }

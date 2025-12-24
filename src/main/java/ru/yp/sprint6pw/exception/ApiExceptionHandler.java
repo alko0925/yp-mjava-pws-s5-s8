@@ -12,18 +12,18 @@ import java.util.NoSuchElementException;
 @ControllerAdvice
 public class ApiExceptionHandler {
     // Обработка 404
-    @ExceptionHandler(NoSuchElementException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNoSuchElementException(NoSuchElementException e, Model model) {
-        model.addAttribute("errReason", e.getMessage());
-        return "error";
-    }
+//    @ExceptionHandler(NoSuchElementException.class)
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public String handleNoSuchElementException(NoSuchElementException e, Model model) {
+//        model.addAttribute("errReason", e.getMessage());
+//        return "error";
+//    }
 
     // Обработка 400
-    @ExceptionHandler({IllegalArgumentException.class, ConstraintViolationException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleIllegalArgumentException(RuntimeException e, Model model) {
-        model.addAttribute("errReason", e.getMessage());
-        return "error";
-    }
+//    @ExceptionHandler({IllegalArgumentException.class, ConstraintViolationException.class})
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public String handleIllegalArgumentException(RuntimeException e, Model model) {
+//        model.addAttribute("errReason", e.getMessage());
+//        return "error";
+//    }
 }

@@ -23,31 +23,31 @@ public class ProductController {
         this.filesService = filesService;
     }
 
-    @GetMapping("/add")
-    public String displayAddForm(Model model) {
-        model.addAttribute("product", new Product());
-        return "add-product";
-    }
+//    @GetMapping("/add")
+//    public String displayAddForm(Model model) {
+//        model.addAttribute("product", new Product());
+//        return "add-product";
+//    }
 
-    @PostMapping("/add")
-    public String addPost(@ModelAttribute("product") Product product,
-                          @RequestParam("image") MultipartFile image,
-                          Model model) {
+//    @PostMapping("/add")
+//    public String addPost(@ModelAttribute("product") Product product,
+//                          @RequestParam("image") MultipartFile image,
+//                          Model model) {
+//
+//        product = productService.create(product);
+//        product.setImgPath("product/image/" + product.getId() + "_" + image.getOriginalFilename());
+//        productService.update(product);
+//        filesService.upload(product.getId() + "_" + image.getOriginalFilename(), image);
+//
+//        return "redirect:/items/" +
+//                product.getId();
+//    }
 
-        product = productService.create(product);
-        product.setImgPath("product/image/" + product.getId() + "_" + image.getOriginalFilename());
-        productService.update(product);
-        filesService.upload(product.getId() + "_" + image.getOriginalFilename(), image);
-
-        return "redirect:/items/" +
-                product.getId();
-    }
-
-    @GetMapping("/image/{image_id}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable(name = "image_id") String imageId) {
-        Resource file = filesService.download(imageId);
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(file);
-    }
+//    @GetMapping("/image/{image_id}")
+//    public ResponseEntity<Resource> downloadImage(@PathVariable(name = "image_id") String imageId) {
+//        Resource file = filesService.download(imageId);
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+//                .body(file);
+//    }
 }
