@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.result.view.Rendering;
+import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.controller.dto.ItemDto;
-import ru.yp.sprint6pw.controller.dto.PageParams;
-import ru.yp.sprint6pw.model.Cart;
-import ru.yp.sprint6pw.model.CartProduct;
-import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.service.CartService;
 import ru.yp.sprint6pw.service.ProductService;
 
@@ -28,62 +26,61 @@ public class ItemController {
         this.cartService = cartService;
     }
 
-//    @GetMapping
-//    public String getItems(@RequestParam(defaultValue = "") String search,
-//                           @RequestParam(defaultValue = "NO") String sort,
-//                           @RequestParam(defaultValue = "1") Integer pageNumber,
-//                           @RequestParam(defaultValue = "5") Integer pageSize,
-//                           @Value("${page.layout.rowsize}") Integer pageRowSize,
-//                           Model model) {
-//
-//        PageParams pageParams = new PageParams(pageNumber, pageSize, false, false);
-//
-//        List<Product> products = productService.getProducts(search, sort, pageParams);
-//        List<List<ItemDto>> items = new ArrayList<>();
-//        List<ItemDto> itemsInner = new ArrayList<>();
-//
-//        Cart cart = cartService.getCartByUserId(1);
-//
-//        int i = 1;
-//        for (var p : products) {
-//            ItemDto item = new ItemDto();
-//            item.setId(p.getId());
-//            item.setTitle(p.getTitle());
-//            item.setDescription(p.getDescription());
-//            item.setImgPath(p.getImgPath());
-//            item.setPrice(p.getPrice());
-//            if (cart != null) {
-//                CartProduct cartProduct = cart.getCartProducts().stream()
-//                        .filter(cp -> cp.getProduct().getId().equals(p.getId()))
-//                        .findFirst().orElse(null);
-//                if (cartProduct != null) item.setCount(cartProduct.getQuantity());
-//                else item.setCount(0);
-//            } else item.setCount(0);
-//            itemsInner.add(item);
-//
-//            if (i == pageRowSize) {
-//                items.add(itemsInner);
-//                itemsInner = new ArrayList<>();
-//                i = 1;
-//            } else i++;
-//        }
-//
-//        if (!itemsInner.isEmpty()) {
-//            while (itemsInner.size() < pageRowSize) {
-//                ItemDto item = new ItemDto();
-//                item.setId(-1);
-//                itemsInner.add(item);
-//            }
-//            items.add(itemsInner);
-//        }
-//
-//        model.addAttribute("items", items);
-//        model.addAttribute("search", search);
-//        model.addAttribute("sort", sort);
-//        model.addAttribute("paging", pageParams);
-//
-//        return "items";
-//    }
+    @GetMapping
+    public Mono<Rendering> getItems(@RequestParam(defaultValue = "") String search,
+                                    @RequestParam(defaultValue = "NO") String sort,
+                                    @RequestParam(defaultValue = "1") Integer pageNumber,
+                                    @RequestParam(defaultValue = "5") Integer pageSize,
+                                    @Value("${page.layout.rowsize}") Integer pageRowSize,
+                                    Model model) {
+
+        return productService.getProducts(search, sort, pageNumber, pageSize)
+                .map(page -> {
+                    List<List<ItemDto>> items = new ArrayList<>();
+                    List<ItemDto> itemsInner = new ArrayList<>();
+                    int i = 1;
+                    for (var p : page.getProducts()) {
+                        ItemDto item = new ItemDto();
+                        item.setId(p.getId());
+                        item.setTitle(p.getTitle());
+                        item.setDescription(p.getDescription());
+                        item.setImgPath(p.getImgPath());
+                        item.setPrice(p.getPrice());
+                        //if (cart != null) {
+                        //    CartProduct cartProduct = cart.getCartProducts().stream()
+                        //            .filter(cp -> cp.getProduct().getId().equals(p.getId()))
+                        //            .findFirst().orElse(null);
+                        //    if (cartProduct != null) item.setCount(cartProduct.getQuantity());
+                        //    else item.setCount(0);
+                        //} else item.setCount(0);
+                        item.setCount(0);
+                        itemsInner.add(item);
+
+                        if (i == pageRowSize) {
+                            items.add(itemsInner);
+                            itemsInner = new ArrayList<>();
+                            i = 1;
+                        } else i++;
+                    }
+
+                    if (!itemsInner.isEmpty()) {
+                        while (itemsInner.size() < pageRowSize) {
+                            ItemDto item = new ItemDto();
+                            item.setId(-1);
+                            itemsInner.add(item);
+                        }
+                        items.add(itemsInner);
+                    }
+
+                    return Rendering.view("items")
+                            .modelAttribute("items", items)
+                                    .modelAttribute("search", search)
+                                    .modelAttribute("sort", sort)
+                                    .modelAttribute("paging", page.getPageParams())
+                                    .build();
+
+                });
+    }
 
 //    @PostMapping
 //    public String applyActionToItems(@RequestParam("id") Integer item_id,
