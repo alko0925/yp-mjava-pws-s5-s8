@@ -1,11 +1,14 @@
 package ru.yp.sprint6pw.service;
 
-import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import ru.yp.sprint6pw.controller.dto.Page;
 import ru.yp.sprint6pw.controller.dto.PageParams;
 import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.repository.ProductRepository;
@@ -23,46 +26,65 @@ public class ProductServiceImpl implements ProductService {
         this.productRepository = productRepository;
     }
 
-//    @Override
-//    public List<Product> getAllProducts() {
-//        return productRepository.findAll();
-//    }
+    @Override
+    public Flux<Product> getAllProducts() {
+        return productRepository.findAll();
+    }
 
-//    @Override
-//    public List<Product> getProducts(String search, String sort, PageParams pageParams) {
-//
-//        Pageable pageRequest;
-//
-//        if (SortType.NO.toString().equals(sort)) {
-//            pageRequest = PageRequest.of(pageParams.getPageNumber() - 1,
-//                    pageParams.getPageSize());
-//        } else {
-//            String sortCriteria = SortType.ALPHA.toString().equals(sort) ? "title" : "price";
-//            pageRequest = PageRequest.of(pageParams.getPageNumber() - 1,
-//                    pageParams.getPageSize(),
-//                    Sort.by(sortCriteria));
-//        }
-//
-//        Page<Product> page = productRepository.findProductsWithCriterias(("%" + search + "%").toLowerCase(), pageRequest);
-//
-//        if (page.getTotalPages() <= 1) {
-//            pageParams.setHasPrevious(false);
-//            pageParams.setHasNext(false);
-//        } else {
-//            if (pageParams.getPageNumber() == 1) {
-//                pageParams.setHasPrevious(false);
-//                pageParams.setHasNext(true);
-//            } else if (pageParams.getPageNumber() < page.getTotalPages()) {
-//                pageParams.setHasPrevious(true);
-//                pageParams.setHasNext(true);
-//            } else {
-//                pageParams.setHasPrevious(true);
-//                pageParams.setHasNext(false);
-//            }
-//        }
-//
-//        return page.getContent();
-//    }
+    @Override
+    public Mono<Page> getProducts(String search, String sort, Integer pageNumber, Integer pageSize) {
+
+        search = ("%" + search + "%").toLowerCase();
+        int offset = (pageNumber - 1) * pageSize;
+        int limit = pageSize;
+
+        Flux<Product> products = switch (SortType.valueOf(sort)) {
+            case NO -> productRepository.findProductsByCriterias(search, offset, limit);
+            case ALPHA -> productRepository.findProductsByCriteriasOrderByTitle(search, offset, limit);
+            case PRICE -> productRepository.findProductsByCriteriasOrderByPrice(search, offset, limit);
+        };
+
+        return products.collectList()
+                .zipWith(productRepository.countProductsByCriterias(search))
+                .map(tuple -> {
+
+                            Page page = new Page();
+                            page.setProducts(tuple.getT1());
+
+                            PageParams pageParams = new PageParams();
+                            pageParams.setPageNumber(pageNumber);
+                            pageParams.setPageSize(pageSize);
+
+                            Integer productsCount = tuple.getT2();
+                            int totalPages = 0;
+
+                            if (productsCount <= pageSize) totalPages = 1;
+                            else {
+                                totalPages = productsCount / pageSize;
+                                totalPages = (productsCount % pageSize == 0) ? totalPages : totalPages + 1;
+                            }
+
+                            if (totalPages <= 1) {
+                                pageParams.setHasPrevious(false);
+                                pageParams.setHasNext(false);
+                            } else {
+                                if (pageNumber == 1) {
+                                    pageParams.setHasPrevious(false);
+                                    pageParams.setHasNext(true);
+                                } else if (pageNumber < totalPages) {
+                                    pageParams.setHasPrevious(true);
+                                    pageParams.setHasNext(true);
+                                } else {
+                                    pageParams.setHasPrevious(true);
+                                    pageParams.setHasNext(false);
+                                }
+                            }
+
+                            page.setPageParams(pageParams);
+                            return page;
+                        }
+                );
+    }
 
 //    @Override
 //    public Product getProduct(Integer itemId) {
