@@ -1,36 +1,35 @@
 package ru.yp.sprint6pw.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
 
-@Entity
 @Table(name = "order_products")
 public class OrderProduct {
-    @EmbeddedId
-    @JsonIgnore
-    private OrderProductPK pk;
+
+    @Id
+    private Integer orderId;
+
+    @Transient
+    private Order order;
+
+    private Integer productId;
+
+    @Transient
+    private Product product;
 
     private Integer quantity;
 
     public OrderProduct() {
-        super();
     }
 
-    public OrderProduct(Order order, Product product, Integer quantity) {
-        pk = new OrderProductPK();
-        pk.setOrder(order);
-        pk.setProduct(product);
+    public OrderProduct(Integer orderId, Integer productId, Integer quantity) {
+        this.orderId = orderId;
+        this.productId = productId;
         this.quantity = quantity;
-    }
-
-    @Transient
-    public Product getProduct() {
-        return this.pk.getProduct();
     }
 
     @Transient
@@ -38,12 +37,36 @@ public class OrderProduct {
         return getProduct().getPrice() * getQuantity();
     }
 
-    public OrderProductPK getPk() {
-        return pk;
+    public Integer getOrderId() {
+        return orderId;
     }
 
-    public void setPk(OrderProductPK pk) {
-        this.pk = pk;
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Integer getQuantity() {
@@ -58,11 +81,11 @@ public class OrderProduct {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         OrderProduct that = (OrderProduct) o;
-        return Objects.equals(pk, that.pk) && Objects.equals(quantity, that.quantity);
+        return Objects.equals(orderId, that.orderId) && Objects.equals(order, that.order) && Objects.equals(productId, that.productId) && Objects.equals(product, that.product) && Objects.equals(quantity, that.quantity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pk, quantity);
+        return Objects.hash(orderId, order, productId, product, quantity);
     }
 }

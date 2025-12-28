@@ -1,23 +1,21 @@
 package ru.yp.sprint6pw.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Table(name = "carts")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "cartProducts")
 public class Cart {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Integer userId;
 
-    @OneToMany(mappedBy = "pk.cart")
+    @Transient
     private List<CartProduct> cartProducts = new ArrayList<>();
 
     @Transient

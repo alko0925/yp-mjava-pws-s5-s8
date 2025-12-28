@@ -1,36 +1,34 @@
 package ru.yp.sprint6pw.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
 
-@Entity
 @Table(name = "cart_products")
 public class CartProduct {
 
-    @EmbeddedId
-    @JsonIgnore
-    private CartProductPK pk;
+    @Id
+    private Integer cartId;
+
+    @Transient
+    private Cart cart;
+
+    private Integer productId;
+
+    @Transient
+    private Product product;
 
     private Integer quantity;
 
     public CartProduct() {
     }
 
-    public CartProduct(Cart cart, Product product, Integer quantity) {
-        pk = new CartProductPK();
-        pk.setCart(cart);
-        pk.setProduct(product);
+    public CartProduct(Integer cartId, Integer productId, Integer quantity) {
+        this.cartId = cartId;
+        this.productId = productId;
         this.quantity = quantity;
-    }
-
-    @Transient
-    public Product getProduct() {
-        return this.pk.getProduct();
     }
 
     @Transient
@@ -38,12 +36,36 @@ public class CartProduct {
         return getProduct().getPrice() * getQuantity();
     }
 
-    public CartProductPK getPk() {
-        return pk;
+    public Integer getCartId() {
+        return cartId;
     }
 
-    public void setPk(CartProductPK pk) {
-        this.pk = pk;
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Integer getQuantity() {
@@ -58,11 +80,11 @@ public class CartProduct {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         CartProduct that = (CartProduct) o;
-        return Objects.equals(pk, that.pk) && Objects.equals(quantity, that.quantity);
+        return Objects.equals(cartId, that.cartId) && Objects.equals(cart, that.cart) && Objects.equals(productId, that.productId) && Objects.equals(product, that.product) && Objects.equals(quantity, that.quantity);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pk, quantity);
+        return Objects.hash(cartId, cart, productId, product, quantity);
     }
 }
