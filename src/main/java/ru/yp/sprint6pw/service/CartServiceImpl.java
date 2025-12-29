@@ -1,12 +1,15 @@
 package ru.yp.sprint6pw.service;
 
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.model.Cart;
 import ru.yp.sprint6pw.model.CartProduct;
-import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.repository.CartProductRepository;
 import ru.yp.sprint6pw.repository.CartRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -19,10 +22,24 @@ public class CartServiceImpl implements CartService {
         this.cartProductRepository = cartProductRepository;
     }
 
-//    @Override
-//    public Cart getCartByUserId(Integer userId) {
-//        return cartRepository.findCartByUserId(userId);
-//    }
+    @Override
+    public Mono<Cart> getCartByUserId(Integer userId) {
+
+        Mono<Cart> cart = cartRepository.findCartByUserId(userId)
+                .defaultIfEmpty(new Cart());
+
+        Mono<List<CartProduct>> cartProducts = cart.flatMap(c -> {
+            if (c.getId() != null) return cartProductRepository.findAllById(List.of(c.getId())).collectList();
+            else return Mono.just(new ArrayList<CartProduct>());
+        });
+
+        return Mono.zip(cart, cartProducts)
+                .map(tuple -> {
+                    Cart c = tuple.getT1();
+                    c.setCartProducts(tuple.getT2());
+                    return c;
+                });
+    }
 
 //    @Override
 //    public void decreaseProductCount(Integer userId, Product product) {

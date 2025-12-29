@@ -15,6 +15,14 @@ public class Cart {
 
     private Integer userId;
 
+    public Cart() {
+    }
+
+    public Cart(Integer id, Integer userId) {
+        this.id = id;
+        this.userId = userId;
+    }
+
     @Transient
     private List<CartProduct> cartProducts = new ArrayList<>();
 
