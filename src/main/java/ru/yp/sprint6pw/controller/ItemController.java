@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.controller.dto.ItemDto;
 import ru.yp.sprint6pw.model.Cart;
 import ru.yp.sprint6pw.model.CartProduct;
+import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.service.CartService;
 import ru.yp.sprint6pw.service.ProductService;
 
@@ -78,10 +79,10 @@ public class ItemController {
 
                     return Rendering.view("items")
                             .modelAttribute("items", items)
-                                    .modelAttribute("search", search)
-                                    .modelAttribute("sort", sort)
-                                    .modelAttribute("paging", tuple.getT1().getPageParams())
-                                    .build();
+                            .modelAttribute("search", search)
+                            .modelAttribute("sort", sort)
+                            .modelAttribute("paging", tuple.getT1().getPageParams())
+                            .build();
                 });
     }
 
@@ -107,31 +108,35 @@ public class ItemController {
 //                pageSize;
 //    }
 
-//    @GetMapping(value = "/{item_id}")
-//    public String getItem(@PathVariable("item_id") Integer item_id,
-//                          Model model) {
-//
-//        Cart cart = cartService.getCartByUserId(1);
-//        Product p = productService.getProduct(item_id);
-//
-//        ItemDto item = new ItemDto();
-//        item.setId(p.getId());
-//        item.setTitle(p.getTitle());
-//        item.setDescription(p.getDescription());
-//        item.setImgPath(p.getImgPath());
-//        item.setPrice(p.getPrice());
-//        if (cart != null) {
-//            CartProduct cartProduct = cart.getCartProducts().stream()
-//                    .filter(cp -> cp.getProduct().getId().equals(p.getId()))
-//                    .findFirst().orElse(null);
-//            if (cartProduct != null) item.setCount(cartProduct.getQuantity());
-//            else item.setCount(0);
-//        } else item.setCount(0);
-//
-//        model.addAttribute("item", item);
-//
-//        return "item";
-//    }
+    @GetMapping(value = "/{item_id}")
+    public Mono<Rendering> getItem(@PathVariable("item_id") Integer item_id,
+                                   Model model) {
+
+        return productService.getProduct(item_id)
+                .zipWith(cartService.getCartByUserId(1))
+                .map(tuple -> {
+                    Product p = tuple.getT1();
+                    Cart cart = tuple.getT2();
+
+                    ItemDto item = new ItemDto();
+                    item.setId(p.getId());
+                    item.setTitle(p.getTitle());
+                    item.setDescription(p.getDescription());
+                    item.setImgPath(p.getImgPath());
+                    item.setPrice(p.getPrice());
+                    if (cart.getId() != null) {
+                        CartProduct cartProduct = cart.getCartProducts().stream()
+                                .filter(cp -> cp.getProductId().equals(p.getId()))
+                                .findFirst().orElse(null);
+                        if (cartProduct != null) item.setCount(cartProduct.getQuantity());
+                        else item.setCount(0);
+                    } else item.setCount(0);
+
+                    return Rendering.view("item")
+                            .modelAttribute("item", item)
+                            .build();
+                });
+    }
 
 //    @PostMapping(value = "/{item_id}")
 //    public String applyActionToItem(@PathVariable("item_id") Integer item_id,
