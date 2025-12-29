@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.controller.dto.ItemDto;
+import ru.yp.sprint6pw.model.Cart;
+import ru.yp.sprint6pw.model.CartProduct;
 import ru.yp.sprint6pw.service.CartService;
 import ru.yp.sprint6pw.service.ProductService;
 
@@ -35,25 +37,27 @@ public class ItemController {
                                     Model model) {
 
         return productService.getProducts(search, sort, pageNumber, pageSize)
-                .map(page -> {
+                .zipWith(cartService.getCartByUserId(1))
+                .map(tuple -> {
                     List<List<ItemDto>> items = new ArrayList<>();
                     List<ItemDto> itemsInner = new ArrayList<>();
                     int i = 1;
-                    for (var p : page.getProducts()) {
+                    for (var p : tuple.getT1().getProducts()) {
                         ItemDto item = new ItemDto();
                         item.setId(p.getId());
                         item.setTitle(p.getTitle());
                         item.setDescription(p.getDescription());
                         item.setImgPath(p.getImgPath());
                         item.setPrice(p.getPrice());
-                        //if (cart != null) {
-                        //    CartProduct cartProduct = cart.getCartProducts().stream()
-                        //            .filter(cp -> cp.getProduct().getId().equals(p.getId()))
-                        //            .findFirst().orElse(null);
-                        //    if (cartProduct != null) item.setCount(cartProduct.getQuantity());
-                        //    else item.setCount(0);
-                        //} else item.setCount(0);
-                        item.setCount(0);
+
+                        Cart cart = tuple.getT2();
+                        if (cart.getId() != null) {
+                            CartProduct cartProduct = cart.getCartProducts().stream()
+                                    .filter(cp -> cp.getProductId().equals(p.getId()))
+                                    .findFirst().orElse(null);
+                            if (cartProduct != null) item.setCount(cartProduct.getQuantity());
+                            else item.setCount(0);
+                        } else item.setCount(0);
                         itemsInner.add(item);
 
                         if (i == pageRowSize) {
@@ -76,9 +80,8 @@ public class ItemController {
                             .modelAttribute("items", items)
                                     .modelAttribute("search", search)
                                     .modelAttribute("sort", sort)
-                                    .modelAttribute("paging", page.getPageParams())
+                                    .modelAttribute("paging", tuple.getT1().getPageParams())
                                     .build();
-
                 });
     }
 
