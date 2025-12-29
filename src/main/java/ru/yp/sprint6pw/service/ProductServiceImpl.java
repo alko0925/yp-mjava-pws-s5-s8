@@ -1,9 +1,5 @@
 package ru.yp.sprint6pw.service;
 
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -13,7 +9,6 @@ import ru.yp.sprint6pw.controller.dto.PageParams;
 import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.repository.ProductRepository;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -86,10 +81,11 @@ public class ProductServiceImpl implements ProductService {
                 );
     }
 
-//    @Override
-//    public Product getProduct(Integer itemId) {
-//        return productRepository.findById(itemId).orElseThrow(() -> new NoSuchElementException("Product not found"));
-//    }
+    @Override
+    public Mono<Product> getProduct(Integer itemId) {
+        return productRepository.findById(itemId)
+                .switchIfEmpty(Mono.error(new NoSuchElementException("Product not found")));
+    }
 
 //    @Override
 //    public Product create(Product product) {
