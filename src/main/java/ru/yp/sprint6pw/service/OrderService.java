@@ -12,6 +12,7 @@ public interface OrderService {
     Mono<List<Order>> getAllOrders();
     Flux<Order> getOrderProductsForOrder(Order order);
     Mono<OrderProduct> setProductToOrderProduct(OrderProduct orderProduct);
-//    Order getOrder(Integer orderId);
-//    Order create(Cart cart);
+    Mono<Order> getOrder(Integer orderId);
+    Mono<Order> create(Cart cart);
+    Mono<Order> saveOrderProductsForOrder(Order order, Cart cart);
 }

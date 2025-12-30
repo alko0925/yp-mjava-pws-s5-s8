@@ -53,23 +53,26 @@ public class OrderServiceImpl implements OrderService {
                 });
     }
 
-//    @Override
-//    public Order getOrder(Integer orderId) {
-//        return orderRepository.findById(orderId).orElseThrow(() -> new NoSuchElementException("Order not found"));
-//    }
+    @Override
+    public Mono<Order> getOrder(Integer orderId) {
+        return orderRepository.findById(orderId)
+                .flatMapMany(this::getOrderProductsForOrder)
+                .next()
+                .switchIfEmpty(Mono.error(new NoSuchElementException("Order not found")));
+    }
 
-//    @Override
-//    public Order create(Cart cart) {
-//        Order order = new Order();
-//        order.setUserId(cart.getUserId());
-//        orderRepository.save(order);
-//
-//        for(var cp : cart.getCartProducts()){
-//            OrderProduct orderProduct = new OrderProduct(order, cp.getProduct(), cp.getQuantity());
-//            orderProductRepository.save(orderProduct);
-//            order.getOrderProducts().add(orderProduct);
-//        }
-//
-//        return orderRepository.save(order);
-//    }
+    @Override
+    public Mono<Order> create(Cart cart) {
+        Order order = new Order();
+        order.setUserId(cart.getUserId());
+        return orderRepository.save(order)
+                .flatMap(o -> saveOrderProductsForOrder(order, cart));
+    }
+
+    @Override
+    public Mono<Order> saveOrderProductsForOrder(Order order, Cart cart) {
+        return Flux.fromStream(cart.getCartProducts().stream())
+                .flatMap(cp -> orderProductRepository.saveByOrderIdAndProductId(order.getId(), cp.getProductId(), cp.getQuantity())).collectList()
+                .thenReturn(order);
+    }
 }
