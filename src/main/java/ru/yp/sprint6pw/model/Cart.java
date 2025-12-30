@@ -27,6 +27,13 @@ public class Cart {
     private List<CartProduct> cartProducts = new ArrayList<>();
 
     @Transient
+    public CartProduct getCartProductByProduct(Product product) {
+        return  getCartProducts().stream()
+                .filter(cp -> cp.getProductId().equals(product.getId()))
+                .findFirst().orElse(null);
+    }
+
+    @Transient
     public Long getTotalCartPrice() {
         Long sum = 0L;
         List<CartProduct> cartProducts = getCartProducts();

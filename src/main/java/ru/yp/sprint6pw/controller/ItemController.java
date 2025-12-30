@@ -36,8 +36,7 @@ public class ItemController {
                                     @RequestParam(defaultValue = "NO") String sort,
                                     @RequestParam(defaultValue = "1") Integer pageNumber,
                                     @RequestParam(defaultValue = "5") Integer pageSize,
-                                    @Value("${page.layout.rowsize}") Integer pageRowSize,
-                                    Model model) {
+                                    @Value("${page.layout.rowsize}") Integer pageRowSize) {
 
         return productService.getProducts(search, sort, pageNumber, pageSize)
                 .zipWith(cartService.getCartByUserId(1))
@@ -55,9 +54,7 @@ public class ItemController {
 
                         Cart cart = tuple.getT2();
                         if (cart.getId() != null) {
-                            CartProduct cartProduct = cart.getCartProducts().stream()
-                                    .filter(cp -> cp.getProductId().equals(p.getId()))
-                                    .findFirst().orElse(null);
+                            CartProduct cartProduct = cart.getCartProductByProduct(p);
                             if (cartProduct != null) item.setCount(cartProduct.getQuantity());
                             else item.setCount(0);
                         } else item.setCount(0);
@@ -115,8 +112,7 @@ public class ItemController {
     }
 
     @GetMapping(value = "/{item_id}")
-    public Mono<Rendering> getItem(@PathVariable("item_id") Integer item_id,
-                                   Model model) {
+    public Mono<Rendering> getItem(@PathVariable("item_id") Integer item_id) {
 
         return productService.getProduct(item_id)
                 .zipWith(cartService.getCartByUserId(1))
@@ -131,9 +127,7 @@ public class ItemController {
                     item.setImgPath(p.getImgPath());
                     item.setPrice(p.getPrice());
                     if (cart.getId() != null) {
-                        CartProduct cartProduct = cart.getCartProducts().stream()
-                                .filter(cp -> cp.getProductId().equals(p.getId()))
-                                .findFirst().orElse(null);
+                        CartProduct cartProduct = cart.getCartProductByProduct(p);
                         if (cartProduct != null) item.setCount(cartProduct.getQuantity());
                         else item.setCount(0);
                     } else item.setCount(0);

@@ -48,10 +48,7 @@ public class CartServiceImpl implements CartService {
         return getCartByUserId(userId)
                 .flatMap(cart -> {
                     if (cart.getId() != null) {
-                        CartProduct cartProduct = cart.getCartProducts().stream()
-                                .filter(cp -> cp.getProductId().equals(product.getId()))
-                                .findFirst().orElse(null);
-
+                        CartProduct cartProduct = cart.getCartProductByProduct(product);
                         if (cartProduct == null) {
                             return Mono.empty();
                         } else {
@@ -83,10 +80,7 @@ public class CartServiceImpl implements CartService {
                 .then(getCartByUserId(userId))
                 .flatMap(cart -> {
                     if (cart.getId() != null) {
-                        CartProduct cartProduct = cart.getCartProducts().stream()
-                                .filter(cp -> cp.getProductId().equals(product.getId()))
-                                .findFirst().orElse(null);
-
+                        CartProduct cartProduct = cart.getCartProductByProduct(product);
                         if (cartProduct == null)
                             return cartProductRepository.saveByCartIdAndProductId(cart.getId(), product.getId());
                         else
@@ -102,10 +96,7 @@ public class CartServiceImpl implements CartService {
         return getCartByUserId(userId)
                 .flatMap(cart -> {
                     if (cart.getId() != null) {
-                        CartProduct cartProduct = cart.getCartProducts().stream()
-                                .filter(cp -> cp.getProductId().equals(product.getId()))
-                                .findFirst().orElse(null);
-
+                        CartProduct cartProduct = cart.getCartProductByProduct(product);
                         if (cartProduct == null)
                             return Mono.empty();
                         else
