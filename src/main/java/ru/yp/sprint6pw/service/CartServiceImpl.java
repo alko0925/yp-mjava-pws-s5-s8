@@ -96,30 +96,33 @@ public class CartServiceImpl implements CartService {
                 }).then();
     }
 
-//    @Override
-//    public void deleteProduct(Integer userId, Product product) {
-//        Cart cart = cartRepository.findCartByUserId(userId);
-//        if (cart == null) {
-//            return;
-//        }
-//
-//        CartProduct cartProduct = cart.getCartProducts().stream()
-//                .filter(cp -> cp.getProduct().getId().equals(product.getId()))
-//                .findFirst().orElse(null);
-//
-//        if (cartProduct == null) {
-//            return;
-//        } else {
-//            cartProductRepository.delete(cartProduct);
-//            cart.getCartProducts().remove(cartProduct);
-//        }
-//
-//        if (cart.getCartProducts().isEmpty()) cartRepository.delete(cart);
-//        else cartRepository.save(cart);
-//    }
+    @Override
+    public Mono<Void> deleteProduct(Integer userId, Product product) {
 
-//    @Override
-//    public void delete(Cart cart) {
-//        cartRepository.delete(cart);
-//    }
+        return getCartByUserId(userId)
+                .flatMap(cart -> {
+                    if (cart.getId() != null) {
+                        CartProduct cartProduct = cart.getCartProducts().stream()
+                                .filter(cp -> cp.getProductId().equals(product.getId()))
+                                .findFirst().orElse(null);
+
+                        if (cartProduct == null)
+                            return Mono.empty();
+                        else
+                            return cartProductRepository.deleteByCartIdAndProductId(cartProduct.getCartId(), cartProduct.getProductId());
+
+                    } else return Mono.empty();
+                })
+                .then(getCartByUserId(userId))
+                .flatMap(cart -> {
+                            if (cart.getId() != null && cart.getCartProducts().isEmpty()) return cartRepository.delete(cart);
+                            else return Mono.empty();
+                        }
+                );
+    }
+
+    @Override
+    public Mono<Void> delete(Cart cart) {
+        return cartRepository.delete(cart);
+    }
 }

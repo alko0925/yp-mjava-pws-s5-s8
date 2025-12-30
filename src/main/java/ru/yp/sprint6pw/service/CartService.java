@@ -8,6 +8,6 @@ public interface CartService {
     Mono<Cart> getCartByUserId(Integer userId);
     Mono<Void> decreaseProductCount(Integer userId, Product product);
     Mono<Void> increaseProductCount(Integer userId, Product product);
-//    void deleteProduct(Integer userId, Product product);
-//    void delete(Cart cart);
+    Mono<Void> deleteProduct(Integer userId, Product product);
+    Mono<Void> delete(Cart cart);
 }
