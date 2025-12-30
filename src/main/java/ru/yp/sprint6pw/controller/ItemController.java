@@ -3,8 +3,11 @@ package ru.yp.sprint6pw.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.result.view.Rendering;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.controller.dto.ItemDto;
 import ru.yp.sprint6pw.model.Cart;
@@ -86,27 +89,32 @@ public class ItemController {
                 });
     }
 
-//    @PostMapping
-//    public String applyActionToItems(@RequestParam("id") Integer item_id,
-//                                     @RequestParam(defaultValue = "") String search,
-//                                     @RequestParam(defaultValue = "NO") String sort,
-//                                     @RequestParam(defaultValue = "1") Integer pageNumber,
-//                                     @RequestParam(defaultValue = "5") Integer pageSize,
-//                                     @RequestParam("action") String action) {
-//
-//        Product p = productService.getProduct(item_id);
-//        if (ActionType.MINUS.toString().equals(action)) cartService.decreaseProductCount(1, p);
-//        if (ActionType.PLUS.toString().equals(action)) cartService.increaseProductCount(1, p);
-//
-//        return "redirect:/items?search=" +
-//                search +
-//                "&sort=" +
-//                sort +
-//                "&pageNumber=" +
-//                pageNumber +
-//                "&pageSize=" +
-//                pageSize;
-//    }
+    @PostMapping
+    public Mono<String> applyActionToItems(ServerWebExchange swe) {
+
+        Mono<MultiValueMap<String, String>> fd = swe.getFormData();
+        Mono<Product> product = fd.flatMap(map -> productService.getProduct(Integer.parseInt(map.getFirst("id"))));
+
+        return Mono.zip(fd, product)
+                .flatMap(tuple -> {
+                    MultiValueMap<String, String> map = tuple.getT1();
+                    Product p = tuple.getT2();
+                    if (ActionType.MINUS.toString().equals(map.getFirst("action")))
+                        return cartService.decreaseProductCount(1, p);
+                    else
+                        return cartService.increaseProductCount(1, p);
+                        //return Mono.empty();
+                }).then(swe.getFormData()).map(map -> {
+                    return "redirect:/items?search=" +
+                            map.getFirst("search") +
+                            "&sort=" +
+                            map.getFirst("sort") +
+                            "&pageNumber=" +
+                            map.getFirst("pageNumber") +
+                            "&pageSize=" +
+                            map.getFirst("pageSize");
+                });
+    }
 
     @GetMapping(value = "/{item_id}")
     public Mono<Rendering> getItem(@PathVariable("item_id") Integer item_id,
