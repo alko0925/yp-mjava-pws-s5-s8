@@ -70,30 +70,31 @@ public class CartServiceImpl implements CartService {
                 );
     }
 
-//    @Override
-//    public void increaseProductCount(Integer userId, Product product) {
-//        Cart cart = cartRepository.findCartByUserId(1);
-//        if (cart == null) {
-//            cart = new Cart();
-//            cart.setUserId(1);
-//            cart = cartRepository.save(cart);
-//        }
-//
-//        CartProduct cartProduct = cart.getCartProducts().stream()
-//                .filter(cp -> cp.getProduct().getId().equals(product.getId()))
-//                .findFirst().orElse(null);
-//
-//        if (cartProduct == null) {
-//            cartProduct = new CartProduct(cart, product, 1);
-//            cartProductRepository.save(cartProduct);
-//            cart.getCartProducts().add(cartProduct);
-//        } else {
-//            cartProduct.setQuantity(cartProduct.getQuantity() + 1);
-//            cartProductRepository.save(cartProduct);
-//        }
-//
-//        cartRepository.save(cart);
-//    }
+    @Override
+    public Mono<Void> increaseProductCount(Integer userId, Product product) {
+
+        return getCartByUserId(userId)
+                .flatMap(cart -> {
+                    if (cart.getId() == null) {
+                        cart.setUserId(userId);
+                        return cartRepository.save(cart);
+                    } else return Mono.empty();
+                })
+                .then(getCartByUserId(userId))
+                .flatMap(cart -> {
+                    if (cart.getId() != null) {
+                        CartProduct cartProduct = cart.getCartProducts().stream()
+                                .filter(cp -> cp.getProductId().equals(product.getId()))
+                                .findFirst().orElse(null);
+
+                        if (cartProduct == null)
+                            return cartProductRepository.saveByCartIdAndProductId(cart.getId(), product.getId());
+                        else
+                            return cartProductRepository.saveByCartIdAndProductId(cartProduct.getCartId(), cartProduct.getProductId(), (cartProduct.getQuantity() + 1));
+
+                    } else return Mono.empty();
+                }).then();
+    }
 
 //    @Override
 //    public void deleteProduct(Integer userId, Product product) {
