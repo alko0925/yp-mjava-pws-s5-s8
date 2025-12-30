@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.model.Cart;
 import ru.yp.sprint6pw.model.CartProduct;
+import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.repository.CartProductRepository;
 import ru.yp.sprint6pw.repository.CartRepository;
 
@@ -41,32 +42,33 @@ public class CartServiceImpl implements CartService {
                 });
     }
 
-//    @Override
-//    public void decreaseProductCount(Integer userId, Product product) {
-//        Cart cart = cartRepository.findCartByUserId(userId);
-//        if (cart == null) {
-//            return;
-//        }
-//
-//        CartProduct cartProduct = cart.getCartProducts().stream()
-//                .filter(cp -> cp.getProduct().getId().equals(product.getId()))
-//                .findFirst().orElse(null);
-//
-//        if (cartProduct == null) {
-//            return;
-//        } else {
-//            if (cartProduct.getQuantity() == 1) {
-//                cartProductRepository.delete(cartProduct);
-//                cart.getCartProducts().remove(cartProduct);
-//            } else {
-//                cartProduct.setQuantity(cartProduct.getQuantity() - 1);
-//                cartProductRepository.save(cartProduct);
-//            }
-//        }
-//
-//        if (cart.getCartProducts().isEmpty()) cartRepository.delete(cart);
-//        else cartRepository.save(cart);
-//    }
+    @Override
+    public Mono<Void> decreaseProductCount(Integer userId, Product product) {
+
+        return getCartByUserId(userId)
+                .flatMap(cart -> {
+                    if (cart.getId() != null) {
+                        CartProduct cartProduct = cart.getCartProducts().stream()
+                                .filter(cp -> cp.getProductId().equals(product.getId()))
+                                .findFirst().orElse(null);
+
+                        if (cartProduct == null) {
+                            return Mono.empty();
+                        } else {
+                            if (cartProduct.getQuantity() == 1)
+                                return cartProductRepository.deleteByCartIdAndProductId(cartProduct.getCartId(), cartProduct.getProductId());
+                            else
+                                return cartProductRepository.saveByCartIdAndProductId(cartProduct.getCartId(), cartProduct.getProductId(), (cartProduct.getQuantity() - 1));
+                        }
+                    } else return Mono.empty();
+                })
+                .then(getCartByUserId(userId))
+                .flatMap(cart -> {
+                            if (cart.getId() != null && cart.getCartProducts().isEmpty()) return cartRepository.delete(cart);
+                            else return Mono.empty();
+                        }
+                );
+    }
 
 //    @Override
 //    public void increaseProductCount(Integer userId, Product product) {
