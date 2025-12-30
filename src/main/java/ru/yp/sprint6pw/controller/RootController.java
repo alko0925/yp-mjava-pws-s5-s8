@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.yp.sprint6pw.model.Cart;
-import ru.yp.sprint6pw.model.Order;
+import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.service.CartService;
 import ru.yp.sprint6pw.service.OrderService;
 
@@ -24,30 +23,35 @@ public class RootController {
         this.cartService = cartService;
     }
 
-//    @GetMapping
-//    public String getItems(@RequestParam(defaultValue = "") String search,
-//                           @RequestParam(defaultValue = "NO") String sort,
-//                           @RequestParam(defaultValue = "1") Integer pageNumber,
-//                           @RequestParam(defaultValue = "5") Integer pageSize) {
-//
-//        return "redirect:/items?search=" +
-//                search +
-//                "&sort=" +
-//                sort +
-//                "&pageNumber=" +
-//                pageNumber +
-//                "&pageSize=" +
-//                pageSize;
-//    }
+    @GetMapping
+    public Mono<String> getItems(@RequestParam(defaultValue = "") String search,
+                                 @RequestParam(defaultValue = "NO") String sort,
+                                 @RequestParam(defaultValue = "1") Integer pageNumber,
+                                 @RequestParam(defaultValue = "5") Integer pageSize) {
 
-//    @PostMapping(value = "/buy")
-//    public String submitOrder() {
-//        Cart cart = cartService.getCartByUserId(1);
-//        if (cart == null) throw new NoSuchElementException("Cart not found");
-//        Order order = orderService.create(cart);
-//        cartService.delete(cart);
-//        return "redirect:/orders/" +
-//                order.getId() +
-//                "?newOrder=true";
-//    }
+        return Mono.just("redirect:/items?search=" +
+                search +
+                "&sort=" +
+                sort +
+                "&pageNumber=" +
+                pageNumber +
+                "&pageSize=" +
+                pageSize);
+    }
+
+    @PostMapping(value = "/buy")
+    public Mono<String> submitOrder() {
+        return cartService.getCartByUserId(1)
+                .flatMap(cart -> {
+                    if (cart.getId() != null) return orderService.create(cart);
+                    else return Mono.empty();
+                })
+                .switchIfEmpty(Mono.error(new NoSuchElementException("Cart not found")))
+                .zipWith(cartService.getCartByUserId(1)
+                        .flatMap(cartService::delete)
+                        .thenReturn(""))
+                .map(tuple -> "redirect:/orders/" +
+                        tuple.getT1().getId() +
+                        "?newOrder=true");
+    }
 }
