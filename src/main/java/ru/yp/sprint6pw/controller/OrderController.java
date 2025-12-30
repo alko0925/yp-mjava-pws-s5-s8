@@ -1,82 +1,79 @@
 package ru.yp.sprint6pw.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.reactive.result.view.Rendering;
+import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.controller.dto.ItemDto;
 import ru.yp.sprint6pw.controller.dto.OrderDto;
-import ru.yp.sprint6pw.model.Order;
-import ru.yp.sprint6pw.service.CartService;
 import ru.yp.sprint6pw.service.OrderService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
-    private final CartService cartService;
 
-    public OrderController(OrderService orderService, CartService cartService) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.cartService = cartService;
     }
 
-//    @GetMapping
-//    public String getOrders(Model model) {
-//
-//        List<Order> orders = orderService.getAllOrders();
-//        List<OrderDto> ordersDto = new ArrayList<>();
-//
-//        for (var o : orders) {
-//            OrderDto orderDto = new OrderDto();
-//            orderDto.setId(o.getId());
-//            for (var op : o.getOrderProducts()) {
-//                ItemDto item = new ItemDto();
-//                item.setId(op.getProduct().getId());
-//                item.setTitle(op.getProduct().getTitle());
-//                item.setDescription(op.getProduct().getDescription());
-//                item.setImgPath(op.getProduct().getImgPath());
-//                item.setPrice(op.getProduct().getPrice());
-//                item.setCount(op.getQuantity());
-//                orderDto.getItems().add(item);
-//            }
-//            orderDto.setTotalSum(o.getTotalOrderPrice());
-//            ordersDto.add(orderDto);
-//        }
-//
-//        model.addAttribute("orders", ordersDto);
-//
-//        return "orders";
-//    }
+    @GetMapping
+    public Mono<Rendering> getOrders() {
 
-//    @GetMapping(value = "/{order_id}")
-//    public String getOrder(@PathVariable("order_id") Integer orderId,
-//                           @RequestParam(defaultValue = "false") Boolean newOrder,
-//                           Model model) {
-//
-//        Order order = orderService.getOrder(orderId);
-//        OrderDto orderDto = new OrderDto();
-//        orderDto.setId(order.getId());
-//        for (var op : order.getOrderProducts()) {
-//            ItemDto item = new ItemDto();
-//            item.setId(op.getProduct().getId());
-//            item.setTitle(op.getProduct().getTitle());
-//            item.setDescription(op.getProduct().getDescription());
-//            item.setImgPath(op.getProduct().getImgPath());
-//            item.setPrice(op.getProduct().getPrice());
-//            item.setCount(op.getQuantity());
-//            orderDto.getItems().add(item);
-//        }
-//        orderDto.setTotalSum(order.getTotalOrderPrice());
-//
-//        model.addAttribute("order", orderDto);
-//        model.addAttribute("newOrder", newOrder);
-//
-//        return "order";
-//    }
+        return orderService.getAllOrders()
+                .map(orders -> {
+                    List<OrderDto> ordersDto = orders.stream().map(o -> {
+                        OrderDto orderDto = new OrderDto();
+                        orderDto.setId(o.getId());
+                        orderDto.setItems(o.getOrderProducts().stream().map(op -> {
+                            ItemDto item = new ItemDto();
+                            item.setId(op.getProduct().getId());
+                            item.setTitle(op.getProduct().getTitle());
+                            item.setDescription(op.getProduct().getDescription());
+                            item.setImgPath(op.getProduct().getImgPath());
+                            item.setPrice(op.getProduct().getPrice());
+                            item.setCount(op.getQuantity());
+                            return item;
+                        }).toList());
+                        orderDto.setTotalSum(o.getTotalOrderPrice());
+                        return orderDto;
+                    }).toList();
+
+                    return Rendering.view("orders")
+                            .modelAttribute("orders", ordersDto)
+                            .build();
+                });
+    }
+
+    @GetMapping(value = "/{order_id}")
+    public Mono<Rendering> getOrder(@PathVariable("order_id") Integer orderId,
+                                    @RequestParam(defaultValue = "false") Boolean newOrder) {
+
+        return orderService.getOrder(orderId)
+                .map(o -> {
+                    OrderDto orderDto = new OrderDto();
+                    orderDto.setId(o.getId());
+                    orderDto.setItems(o.getOrderProducts().stream().map(op -> {
+                        ItemDto item = new ItemDto();
+                        item.setId(op.getProduct().getId());
+                        item.setTitle(op.getProduct().getTitle());
+                        item.setDescription(op.getProduct().getDescription());
+                        item.setImgPath(op.getProduct().getImgPath());
+                        item.setPrice(op.getProduct().getPrice());
+                        item.setCount(op.getQuantity());
+                        return item;
+                    }).toList());
+                    orderDto.setTotalSum(o.getTotalOrderPrice());
+
+                    return Rendering.view("order")
+                            .modelAttribute("order", orderDto)
+                            .modelAttribute("newOrder", newOrder)
+                            .build();
+                });
+    }
 }
