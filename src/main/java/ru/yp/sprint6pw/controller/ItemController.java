@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.result.view.Rendering;
 import org.springframework.web.server.ServerWebExchange;
@@ -103,7 +102,6 @@ public class ItemController {
                         return cartService.decreaseProductCount(1, p);
                     else
                         return cartService.increaseProductCount(1, p);
-                        //return Mono.empty();
                 }).then(swe.getFormData()).map(map -> {
                     return "redirect:/items?search=" +
                             map.getFirst("search") +
@@ -146,15 +144,22 @@ public class ItemController {
                 });
     }
 
-//    @PostMapping(value = "/{item_id}")
-//    public String applyActionToItem(@PathVariable("item_id") Integer item_id,
-//                                    @RequestParam("action") String action) {
-//
-//        Product p = productService.getProduct(item_id);
-//        if (ActionType.MINUS.toString().equals(action)) cartService.decreaseProductCount(1, p);
-//        if (ActionType.PLUS.toString().equals(action)) cartService.increaseProductCount(1, p);
-//
-//        return "redirect:/items/" +
-//                item_id;
-//    }
+    @PostMapping(value = "/{item_id}")
+    public Mono<String> applyActionToItem(@PathVariable("item_id") Integer item_id,
+                                          ServerWebExchange swe) {
+
+        return productService.getProduct(item_id)
+                .zipWith(swe.getFormData())
+                .flatMap(
+                        tuple -> {
+                            Product p = tuple.getT1();
+                            MultiValueMap<String, String> map = tuple.getT2();
+                            if (ActionType.MINUS.toString().equals(map.getFirst("action")))
+                                return cartService.decreaseProductCount(1, p);
+                            else
+                                return cartService.increaseProductCount(1, p);
+                        }
+                ).thenReturn("redirect:/items/" +
+                        item_id);
+    }
 }
