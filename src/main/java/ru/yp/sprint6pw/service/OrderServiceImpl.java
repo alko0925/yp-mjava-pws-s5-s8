@@ -1,8 +1,11 @@
 package ru.yp.sprint6pw.service;
 
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.model.Cart;
+import ru.yp.sprint6pw.model.CartProduct;
 import ru.yp.sprint6pw.model.Order;
 import ru.yp.sprint6pw.model.OrderProduct;
 import ru.yp.sprint6pw.repository.OrderProductRepository;
@@ -17,16 +20,38 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
+    private final ProductService productService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderProductRepository orderProductRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderProductRepository orderProductRepository, ProductService productService) {
         this.orderRepository = orderRepository;
         this.orderProductRepository = orderProductRepository;
+        this.productService = productService;
     }
 
-//    @Override
-//    public List<Order> getAllOrders() {
-//        return orderRepository.findAll();
-//    }
+    @Override
+    public Mono<List<Order>> getAllOrders() {
+        return orderRepository.findAll()
+                .flatMap(this::getOrderProductsForOrder).collectList();
+    }
+
+    @Override
+    public Flux<Order> getOrderProductsForOrder(Order order) {
+        return Flux.from(orderProductRepository.findAllById(List.of(order.getId()))
+                .flatMap(this::setProductToOrderProduct).collectList()
+                .map(ops -> {
+                    order.setOrderProducts(ops);
+                    return order;
+                }));
+    }
+
+    @Override
+    public Mono<OrderProduct> setProductToOrderProduct(OrderProduct orderProduct) {
+        return productService.getProduct(orderProduct.getProductId())
+                .map(p -> {
+                    orderProduct.setProduct(p);
+                    return orderProduct;
+                });
+    }
 
 //    @Override
 //    public Order getOrder(Integer orderId) {
