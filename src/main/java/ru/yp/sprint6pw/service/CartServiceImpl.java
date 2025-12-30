@@ -2,6 +2,7 @@ package ru.yp.sprint6pw.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.model.Cart;
 import ru.yp.sprint6pw.model.CartProduct;
@@ -9,7 +10,6 @@ import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.repository.CartProductRepository;
 import ru.yp.sprint6pw.repository.CartRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,10 +17,12 @@ import java.util.List;
 public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final CartProductRepository cartProductRepository;
+    private final ProductService productService;
 
-    public CartServiceImpl(CartRepository cartRepository, CartProductRepository cartProductRepository) {
+    public CartServiceImpl(CartRepository cartRepository, CartProductRepository cartProductRepository, ProductService productService) {
         this.cartRepository = cartRepository;
         this.cartProductRepository = cartProductRepository;
+        this.productService = productService;
     }
 
     @Override
@@ -29,16 +31,25 @@ public class CartServiceImpl implements CartService {
         Mono<Cart> cart = cartRepository.findCartByUserId(userId)
                 .defaultIfEmpty(new Cart());
 
-        Mono<List<CartProduct>> cartProducts = cart.flatMap(c -> {
-            if (c.getId() != null) return cartProductRepository.findAllById(List.of(c.getId())).collectList();
-            else return Mono.just(new ArrayList<CartProduct>());
-        });
+        Mono<List<CartProduct>> cartProducts = cart.flatMapMany(c -> {
+            if (c.getId() != null) return cartProductRepository.findAllById(List.of(c.getId()));
+            else return Flux.empty();
+        }).flatMap(this::setProductToCartProduct).collectList();
 
         return Mono.zip(cart, cartProducts)
                 .map(tuple -> {
                     Cart c = tuple.getT1();
                     c.setCartProducts(tuple.getT2());
                     return c;
+                });
+    }
+
+    @Override
+    public Mono<CartProduct> setProductToCartProduct(CartProduct cartProduct) {
+        return productService.getProduct(cartProduct.getProductId())
+                .map(p -> {
+                    cartProduct.setProduct(p);
+                    return cartProduct;
                 });
     }
 
