@@ -5,7 +5,6 @@ import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.model.Cart;
-import ru.yp.sprint6pw.model.CartProduct;
 import ru.yp.sprint6pw.model.Order;
 import ru.yp.sprint6pw.model.OrderProduct;
 import ru.yp.sprint6pw.repository.OrderProductRepository;

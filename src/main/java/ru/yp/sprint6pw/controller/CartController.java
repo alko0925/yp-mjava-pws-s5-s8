@@ -29,7 +29,7 @@ public class CartController {
     }
 
     @GetMapping(value = "/items")
-    public Mono<Rendering> getItems(Model model) {
+    public Mono<Rendering> getItems() {
 
         return cartService.getCartByUserId(1)
                 .map(cart -> {
