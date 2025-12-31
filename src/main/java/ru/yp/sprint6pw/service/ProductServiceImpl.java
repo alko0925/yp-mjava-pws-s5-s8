@@ -87,13 +87,13 @@ public class ProductServiceImpl implements ProductService {
                 .switchIfEmpty(Mono.error(new NoSuchElementException("Product not found")));
     }
 
-//    @Override
-//    public Product create(Product product) {
-//        return productRepository.save(product);
-//    }
+    @Override
+    public Mono<Product> create(Product product) {
+        return productRepository.save(product);
+    }
 
-//    @Override
-//    public void update(Product product) {
-//        productRepository.save(product);
-//    }
+    @Override
+    public Mono<Product> update(Product product) {
+        return productRepository.save(product);
+    }
 }

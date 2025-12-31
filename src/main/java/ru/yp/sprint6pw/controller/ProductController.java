@@ -3,10 +3,11 @@ package ru.yp.sprint6pw.controller;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.result.view.Rendering;
+import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.service.FilesService;
 import ru.yp.sprint6pw.service.ProductService;
@@ -23,31 +24,33 @@ public class ProductController {
         this.filesService = filesService;
     }
 
-//    @GetMapping("/add")
-//    public String displayAddForm(Model model) {
-//        model.addAttribute("product", new Product());
-//        return "add-product";
-//    }
+    @GetMapping("/add")
+    public Mono<Rendering> displayAddForm() {
+        return Mono.just(
+                Rendering.view("add-product")
+                        .modelAttribute("product", new Product())
+                        .build()
+        );
+    }
 
-//    @PostMapping("/add")
-//    public String addPost(@ModelAttribute("product") Product product,
-//                          @RequestParam("image") MultipartFile image,
-//                          Model model) {
-//
-//        product = productService.create(product);
-//        product.setImgPath("product/image/" + product.getId() + "_" + image.getOriginalFilename());
-//        productService.update(product);
-//        filesService.upload(product.getId() + "_" + image.getOriginalFilename(), image);
-//
-//        return "redirect:/items/" +
-//                product.getId();
-//    }
+    @PostMapping("/add")
+    public Mono<String> addProduct(@ModelAttribute("product") Product product,
+                                   @RequestPart("image") FilePart image) {
 
-//    @GetMapping("/image/{image_id}")
-//    public ResponseEntity<Resource> downloadImage(@PathVariable(name = "image_id") String imageId) {
-//        Resource file = filesService.download(imageId);
-//        return ResponseEntity.ok()
-//                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-//                .body(file);
-//    }
+        return productService.create(product)
+                .flatMap(p -> {
+                    p.setImgPath("product/image/" + p.getId() + "_" + image.filename());
+                    return productService.update(p);
+                })
+                .flatMap(p -> filesService.upload(p, image))
+                .map(p -> "redirect:/items/" + p.getId());
+    }
+
+    @GetMapping("/image/{image_id}")
+    public Mono<ResponseEntity<Resource>> downloadImage(@PathVariable(name = "image_id") String imageId) {
+        return filesService.download(imageId)
+                .map(file -> ResponseEntity.ok()
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(file));
+    }
 }
