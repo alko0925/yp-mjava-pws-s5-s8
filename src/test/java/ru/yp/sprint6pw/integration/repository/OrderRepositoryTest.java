@@ -1,10 +1,11 @@
 package ru.yp.sprint6pw.integration.repository;
 
-import jakarta.transaction.Transactional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.MyMarketApplicationTest;
 import ru.yp.sprint6pw.model.*;
 import ru.yp.sprint6pw.repository.*;
@@ -23,38 +24,33 @@ public class OrderRepositoryTest extends MyMarketApplicationTest {
     @Autowired
     private ProductRepository productRepository;
 
-//    @BeforeEach
-//    void setUp() {
-//        orderRepository.deleteAll();
-//
-//        Integer userId = 1;
-//        Order order = new Order();
-//        order.setUserId(userId);
-//        orderRepository.save(order);
-//
-//        Product p1 = productRepository.save(new Product("Prod1", "", "", 1000L));
-//        OrderProduct op1 = orderProductRepository.save(new OrderProduct(order, p1, 3));
-//        order.getOrderProducts().add(op1);
-//
-//        orderRepository.save(order);
-//    }
+    @BeforeEach
+    void setUp() {
+        orderRepository.deleteAll()
+                .then(Mono.fromCallable(() -> {
+                    Integer userId = 1;
+                    Order order = new Order();
+                    order.setUserId(userId);
+                    return order;
+                }))
+                .flatMap(order -> orderRepository.save(order))
+                .block();
+    }
 
-//    @Test
-//    @Transactional
-//    void testFindCartByUserId() {
-//        Integer userId = 1;
-//        Order result = orderRepository.findAll().getFirst();
-//
-//        assertNotNull(result, "Order was not found");
-//        assertEquals(userId, result.getUserId(), "Order of wrong User was retrieved");
-//        assertEquals(1, result.getOrderProducts().size(), "Wrong number of products in order");
-//        assertEquals(3, result.getOrderProducts().stream().filter(op -> op.getProduct().getTitle() == "Prod1").findFirst().get().getQuantity(), "Wrong quantity of specific product in order");
-//    }
+    @Test
+    void testFindOrderByUserId() {
+        Integer userId = 1;
+        Order result = orderRepository.findAll().blockFirst();
 
-//    @AfterEach
-//    void cleanUp() {
-//        orderProductRepository.deleteAll();
-//        orderRepository.deleteAll();
-//        productRepository.deleteAll();
-//    }
+        assertNotNull(result, "Order was not found");
+        assertEquals(userId, result.getUserId(), "Order with wrong user id was retrieved");
+    }
+
+    @AfterEach
+    void cleanUp() {
+        orderProductRepository.deleteAll()
+                .then(orderRepository.deleteAll())
+                .then(productRepository.deleteAll())
+                .block();
+    }
 }
