@@ -1,14 +1,15 @@
 package ru.yp.sprint6pw.integration.repository;
 
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.MyMarketApplicationTest;
-import ru.yp.sprint6pw.model.*;
-import ru.yp.sprint6pw.repository.*;
+import ru.yp.sprint6pw.model.Order;
+import ru.yp.sprint6pw.repository.OrderProductRepository;
+import ru.yp.sprint6pw.repository.OrderRepository;
+import ru.yp.sprint6pw.repository.ProductRepository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

@@ -1,22 +1,18 @@
 package ru.yp.sprint6pw.integration.repository;
 
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.MyMarketApplicationTest;
 import ru.yp.sprint6pw.model.Cart;
-import ru.yp.sprint6pw.model.CartProduct;
-import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.repository.CartProductRepository;
 import ru.yp.sprint6pw.repository.CartRepository;
 import ru.yp.sprint6pw.repository.ProductRepository;
 
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CartRepositoryTest extends MyMarketApplicationTest {
 

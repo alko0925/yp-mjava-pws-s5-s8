@@ -4,14 +4,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
 import ru.yp.sprint6pw.MyMarketApplicationTest;
 import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.repository.ProductRepository;
-import ru.yp.sprint6pw.service.SortType;
 
 import java.util.List;
 

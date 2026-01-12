@@ -7,7 +7,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint6pw.MyMarketApplicationTest;
-import ru.yp.sprint6pw.model.*;
+import ru.yp.sprint6pw.model.Order;
+import ru.yp.sprint6pw.model.OrderProduct;
+import ru.yp.sprint6pw.model.Product;
 import ru.yp.sprint6pw.repository.OrderProductRepository;
 import ru.yp.sprint6pw.repository.OrderRepository;
 import ru.yp.sprint6pw.service.OrderService;
@@ -19,7 +21,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 public class OrderServiceTest extends MyMarketApplicationTest {
 
