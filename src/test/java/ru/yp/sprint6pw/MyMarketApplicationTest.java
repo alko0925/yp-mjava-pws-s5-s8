@@ -7,10 +7,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.yp.sprint6pw.config.PostgreSQLTestcontainer;
 
+@ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Testcontainers
 @ImportTestcontainers(PostgreSQLTestcontainer.class)
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 public class MyMarketApplicationTest {
 }
