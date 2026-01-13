@@ -2,3 +2,7 @@ spring:
   sql:
     init:
       mode: always
+
+page:
+  layout:
+    rowsize: 4

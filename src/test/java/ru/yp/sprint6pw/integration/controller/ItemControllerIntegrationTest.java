@@ -1,52 +1,89 @@
 package ru.yp.sprint6pw.integration.controller;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Sort;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import org.springframework.http.MediaType;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
 
 class ItemControllerIntegrationTest extends MyMarketApplicationWebTest {
 
-//    @Test
-//    void getItems_returnsViewItems() throws Exception {
-//        mockMvc.perform(get("/items?search=&sort=&pageNumber=1&pageSize=5"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType("text/html;charset=UTF-8"))
-//                .andExpect(view().name("items"))
-//                .andExpect(model().attributeExists("items"))
-//                .andExpect(model().attribute("items", hasSize(1)))
-//                .andExpect(model().attributeExists("search"))
-//                .andExpect(model().attributeExists("sort"))
-//                .andExpect(model().attributeExists("paging"));
-//    }
+    @Test
+    void getItems_returnsViewItems() throws Exception {
+        webTestClient.get()
+                .uri("/items?search=&sort=&pageNumber=1&pageSize=5")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.TEXT_HTML)
+                .expectBody(String.class)
+                .value(html -> {
+                    assert html.contains("<h5 class=\"card-title\">Prod1</h5>");
+                    assert html.contains("<span>2</span>");
+                    assert html.contains("<h5 class=\"card-title\">Prod2</h5>");
+                    assert html.contains("<span>4</span>");
+                    assert html.contains("<h5 class=\"card-title\">Prod3</h5>");
+                    assert html.contains("<span>0</span>");
+                });
+    }
 
-//    @Test
-//    void applyPlusActionToItems_returnsRedirectToCartItems() throws Exception {
-//
-//        Integer productId = productRepository.findAll(Sort.by("id").descending()).getFirst().getId();
-//        mockMvc.perform(post("/items?id=" + productId + "&action=PLUS"))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl("/items?search=&sort=NO&pageNumber=1&pageSize=5"));
-//    }
+    @Test
+    void applyPlusActionToItems_returnsRedirectToViewItems() throws Exception {
 
-//    @Test
-//    void getItem_returnsViewItem() throws Exception {
-//        Integer productId = productRepository.findAll(Sort.by("id").descending()).getFirst().getId();
-//        mockMvc.perform(get("/items/" + productId))
-//                .andExpect(status().isOk())
-//                .andExpect(content().contentType("text/html;charset=UTF-8"))
-//                .andExpect(view().name("item"))
-//                .andExpect(model().attributeExists("item"));
-//    }
+        Integer productId = productRepository.findProductsByCriterias("%prod1%", 0, 5)
+                .collectList()
+                .block()
+                .getFirst()
+                .getId();
 
-//    @Test
-//    void applyPlusActionToItem_returnsRedirectToItem() throws Exception {
-//
-//        Integer productId = productRepository.findAll(Sort.by("id").descending()).getFirst().getId();
-//        mockMvc.perform(post("/items/" + productId + "?action=PLUS"))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl("/items/" + productId));
-//    }
+        MultiValueMap<String,String> formData = new LinkedMultiValueMap<>();
+        formData.add("id", productId.toString());
+        formData.add("search", "");
+        formData.add("sort", "NO");
+        formData.add("pageNumber", "1");
+        formData.add("pageSize", "5");
+        formData.add("action", "PLUS");
+
+        webTestClient.post()
+                .uri("/items")
+                .body(BodyInserters.fromFormData(formData))
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectHeader().valueEquals("Location", "/items?search=&sort=NO&pageNumber=1&pageSize=5");
+    }
+
+    @Test
+    void getItem_returnsViewItem() throws Exception {
+        Integer productId = productRepository.findProductsByCriterias("%prod1%", 0, 5)
+                .collectList()
+                .block()
+                .getFirst()
+                .getId();
+
+        webTestClient.get()
+                .uri("/items/" + productId)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.TEXT_HTML)
+                .expectBody(String.class)
+                .value(html -> {
+                    assert html.contains("<h5 class=\"card-title\">Prod1</h5>");
+                    assert html.contains("<span>2</span>");
+                });
+    }
+
+    @Test
+    void applyPlusActionToItem_returnsRedirectToViewItem() throws Exception {
+
+        Integer productId = productRepository.findProductsByCriterias("%prod1%", 0, 5)
+                .collectList()
+                .block()
+                .getFirst()
+                .getId();
+
+        webTestClient.post()
+                .uri("/items/" + productId + "?action=PLUS")
+                .exchange()
+                .expectStatus().is3xxRedirection()
+                .expectHeader().valueEquals("Location", "/items/" + productId);
+    }
 }
