@@ -73,7 +73,6 @@ class ItemControllerIntegrationTest extends MyMarketApplicationWebTest {
 
     @Test
     void applyPlusActionToItem_returnsRedirectToViewItem() throws Exception {
-
         Integer productId = productRepository.findProductsByCriterias("%prod1%", 0, 5)
                 .collectList()
                 .block()
