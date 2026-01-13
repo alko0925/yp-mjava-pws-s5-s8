@@ -10,7 +10,6 @@ public class CartControllerIntegrationTest extends MyMarketApplicationWebTest {
 
     @Test
     void getItems_returnsViewCart() throws Exception {
-
         webTestClient.get()
                 .uri("/cart/items")
                 .exchange()
