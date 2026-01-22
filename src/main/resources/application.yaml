@@ -6,17 +6,10 @@ spring:
     init:
       mode: always
 
-  datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+  r2dbc:
+    url: r2dbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
     username: ${POSTGRES_USER}
     password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: false
 
 page:
   layout:
@@ -32,8 +25,7 @@ spring:
     activate:
       on-profile: isolation
 
-  datasource:
-    url: jdbc:h2:mem:usersdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+  r2dbc:
+    url: r2dbc:h2:mem:///usersdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
-    driver-class-name: org.h2.Driver
