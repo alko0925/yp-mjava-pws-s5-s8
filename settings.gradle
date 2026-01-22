@@ -1,1 +1,5 @@
 rootProject.name = 'yp-mjava-pws-s5-s8'
+include('mart-app', 'pay-app')
+
+project(':mart-app').buildFileName = 'mart-app.gradle'
+project(':pay-app').buildFileName = 'pay-app.gradle'

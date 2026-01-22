@@ -1,0 +1,10 @@
+plugins {
+	id("yp-mjava-pws-s5-s8-common")
+}
+
+description = 'Practical work for yp - sprint 7: Mart App.'
+
+bootJar {
+	destinationDirectory = file('../docker-compose/mart-app')
+	launchScript()
+}
