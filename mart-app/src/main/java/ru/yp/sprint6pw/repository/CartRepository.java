@@ -8,6 +8,6 @@ import ru.yp.sprint6pw.model.Cart;
 
 @Repository
 public interface CartRepository extends ReactiveCrudRepository<Cart, Integer> {
-    @Query(value = "SELECT id, user_id FROM carts c WHERE c.user_id = :user_id")
+    @Query(value = "SELECT id, user_id FROM mart_app.carts c WHERE c.user_id = :user_id")
     Mono<Cart> findCartByUserId(Integer user_id);
 }

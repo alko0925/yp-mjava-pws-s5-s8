@@ -11,7 +11,7 @@ import ru.yp.sprint6pw.model.Product;
 public interface ProductRepository extends ReactiveCrudRepository<Product, Integer> {
 
     @Query(value = """
-            SELECT count(1) FROM products p
+            SELECT count(1) FROM mart_app.products p
             WHERE LOWER(p.title) LIKE :search OR LOWER(p.description) LIKE :search
             """
     )
@@ -19,7 +19,7 @@ public interface ProductRepository extends ReactiveCrudRepository<Product, Integ
 
     @Query(value = """
             SELECT id, title, description, img_path, price
-            FROM products p
+            FROM mart_app.products p
             WHERE LOWER(p.title) LIKE :search OR LOWER(p.description) LIKE :search
             OFFSET :offset LIMIT :limit
             """
@@ -28,7 +28,7 @@ public interface ProductRepository extends ReactiveCrudRepository<Product, Integ
 
     @Query(value = """
             SELECT id, title, description, img_path, price
-            FROM products p
+            FROM mart_app.products p
             WHERE LOWER(p.title) LIKE :search OR LOWER(p.description) LIKE :search
             ORDER BY title
             OFFSET :offset LIMIT :limit
@@ -38,7 +38,7 @@ public interface ProductRepository extends ReactiveCrudRepository<Product, Integ
 
     @Query(value = """
             SELECT id, title, description, img_path, price
-            FROM products p
+            FROM mart_app.products p
             WHERE LOWER(p.title) LIKE :search OR LOWER(p.description) LIKE :search
             ORDER BY price
             OFFSET :offset LIMIT :limit

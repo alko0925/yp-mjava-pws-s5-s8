@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.util.ArrayList;
 import java.util.List;
 
-@Table(name = "carts")
+@Table(schema = "mart_app", name = "carts")
 public class Cart {
 
     @Id

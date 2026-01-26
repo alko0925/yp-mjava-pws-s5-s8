@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS products (
+CREATE SCHEMA IF NOT EXISTS mart_app;
+
+CREATE TABLE IF NOT EXISTS mart_app.products (
     id SERIAL PRIMARY KEY,
     title VARCHAR(400) NOT NULL,
     description VARCHAR(400),
@@ -6,12 +8,12 @@ CREATE TABLE IF NOT EXISTS products (
     price BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS orders (
+CREATE TABLE IF NOT EXISTS mart_app.orders (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS order_products (
+CREATE TABLE IF NOT EXISTS mart_app.order_products (
     order_id INTEGER REFERENCES orders ON DELETE CASCADE,
     product_id INTEGER REFERENCES products,
     quantity INTEGER NOT NULL,
@@ -19,12 +21,12 @@ CREATE TABLE IF NOT EXISTS order_products (
     CONSTRAINT order_products_count_positive CHECK (quantity > 0)
 );
 
-CREATE TABLE IF NOT EXISTS carts (
+CREATE TABLE IF NOT EXISTS mart_app.carts (
     id BIGSERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS cart_products (
+CREATE TABLE IF NOT EXISTS mart_app.cart_products (
     cart_id INTEGER REFERENCES carts ON DELETE CASCADE,
     product_id INTEGER REFERENCES products,
     quantity INTEGER NOT NULL,

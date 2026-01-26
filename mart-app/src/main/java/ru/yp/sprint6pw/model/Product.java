@@ -3,7 +3,7 @@ package ru.yp.sprint6pw.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-@Table(name = "products")
+@Table(schema = "mart_app", name = "products")
 public class Product {
 
     @Id

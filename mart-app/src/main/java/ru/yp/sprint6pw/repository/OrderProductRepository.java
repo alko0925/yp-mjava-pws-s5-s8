@@ -8,7 +8,7 @@ import ru.yp.sprint6pw.model.*;
 
 @Repository
 public interface OrderProductRepository extends ReactiveCrudRepository<OrderProduct, Integer> {
-    @Query(value = "INSERT INTO order_products (order_id, product_id, quantity) VALUES (:order_id, :product_id, :quantity)")
+    @Query(value = "INSERT INTO mart_app.order_products (order_id, product_id, quantity) VALUES (:order_id, :product_id, :quantity)")
     Mono<OrderProduct> saveByOrderIdAndProductId(Integer cart_id, Integer product_id, Integer quantity);
 
 }
