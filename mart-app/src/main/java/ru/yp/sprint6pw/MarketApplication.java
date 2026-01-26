@@ -10,10 +10,10 @@ import ru.yp.sprint6pw.repository.ProductRepository;
 import java.util.List;
 
 @SpringBootApplication
-public class MyMarketApplication {
+public class MarketApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MyMarketApplication.class, args);
+        SpringApplication.run(MarketApplication.class, args);
     }
 
     @Bean

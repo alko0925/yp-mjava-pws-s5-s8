@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS mart_app.orders (
 );
 
 CREATE TABLE IF NOT EXISTS mart_app.order_products (
-    order_id INTEGER REFERENCES orders ON DELETE CASCADE,
-    product_id INTEGER REFERENCES products,
+    order_id INTEGER REFERENCES mart_app.orders ON DELETE CASCADE,
+    product_id INTEGER REFERENCES mart_app.products,
     quantity INTEGER NOT NULL,
     CONSTRAINT order_products_unique_id UNIQUE(order_id, product_id),
     CONSTRAINT order_products_count_positive CHECK (quantity > 0)
@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS mart_app.carts (
 );
 
 CREATE TABLE IF NOT EXISTS mart_app.cart_products (
-    cart_id INTEGER REFERENCES carts ON DELETE CASCADE,
-    product_id INTEGER REFERENCES products,
+    cart_id INTEGER REFERENCES mart_app.carts ON DELETE CASCADE,
+    product_id INTEGER REFERENCES mart_app.products,
     quantity INTEGER NOT NULL,
     CONSTRAINT cart_products_unique_id UNIQUE(cart_id, product_id),
     CONSTRAINT cart_products_count_positive CHECK (quantity > 0)

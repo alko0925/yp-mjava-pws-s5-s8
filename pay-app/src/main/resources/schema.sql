@@ -1,33 +1,27 @@
-CREATE TABLE IF NOT EXISTS products (
+CREATE SCHEMA IF NOT EXISTS pay_app;
+
+CREATE TABLE IF NOT EXISTS pay_app.users (
+    id INTEGER PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT users_unique_email UNIQUE(email)
+);
+
+CREATE TABLE IF NOT EXISTS pay_app.accounts (
     id SERIAL PRIMARY KEY,
-    title VARCHAR(400) NOT NULL,
-    description VARCHAR(400),
-    img_path VARCHAR(255),
-    price BIGINT NOT NULL DEFAULT 0
+    user_id INTEGER NOT NULL REFERENCES pay_app.users,
+    balance NUMERIC(10,2) NOT NULL DEFAULT 0,
+    CONSTRAINT accounts_balance_not_negative CHECK (balance >= 0)
 );
 
-CREATE TABLE IF NOT EXISTS orders (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS order_products (
-    order_id INTEGER REFERENCES orders ON DELETE CASCADE,
-    product_id INTEGER REFERENCES products,
-    quantity INTEGER NOT NULL,
-    CONSTRAINT order_products_unique_id UNIQUE(order_id, product_id),
-    CONSTRAINT order_products_count_positive CHECK (quantity > 0)
-);
-
-CREATE TABLE IF NOT EXISTS carts (
+CREATE TABLE IF NOT EXISTS pay_app.accounts_history (
     id BIGSERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL UNIQUE
-);
-
-CREATE TABLE IF NOT EXISTS cart_products (
-    cart_id INTEGER REFERENCES carts ON DELETE CASCADE,
-    product_id INTEGER REFERENCES products,
-    quantity INTEGER NOT NULL,
-    CONSTRAINT cart_products_unique_id UNIQUE(cart_id, product_id),
-    CONSTRAINT cart_products_count_positive CHECK (quantity > 0)
+    account_id INTEGER REFERENCES pay_app.accounts ON DELETE CASCADE,
+    operation VARCHAR(20) NOT NULL,
+    amount NUMERIC(10,2) NOT NULL,
+    original_balance NUMERIC(10,2) NOT NULL,
+    new_balance NUMERIC(10,2) NOT NULL,
+    CONSTRAINT accounts_history_amount_positive CHECK (amount > 0)
 );
