@@ -13,6 +13,19 @@ services:
       - POSTGRES_PASSWORD=yp_pwd
       - POSTGRES_DB=yp_db
 
+  yp-redis:
+    container_name: yp-redis
+    build:
+      context: ./docker-compose/redis
+      dockerfile: Dockerfile
+    image: yp-redis
+    ports:
+      - "6379:6379"
+    restart: always
+    environment:
+    depends_on:
+      - yp-db
+
   yp-pgadmin:
     container_name: yp-pgadmin
     image: dpage/pgadmin4
@@ -21,7 +34,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=yp_user@domain.com
       - PGADMIN_DEFAULT_PASSWORD=pga_pwd
     depends_on:
-      - yp-db
+      - yp-redis
       
   yp-app:
     container_name: yp-app
