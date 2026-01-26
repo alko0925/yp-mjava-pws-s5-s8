@@ -4,6 +4,11 @@ plugins {
 
 description = 'Practical work for yp - sprint 7: Mart App.'
 
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+	testImplementation 'com.redis:testcontainers-redis:2.2.2'
+}
+
 bootJar {
 	destinationDirectory = file('../docker-compose/mart-app')
 	launchScript()
