@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Auto Payment API
+  description: API for balance replenishment and order payment
+  version: 1.0.0
+tags:
+  - name: Account
+    description: Account operations
+servers:
+  - url: http://localhost:8081
+    description: Dev server
+paths:
+  /api/accounts/{userId}:
+    get:
+      summary: Get current balance
+      tags:
+        - Account
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/Successful'
+    put:
+      summary: Execute operation like deposit or payment
+      tags:
+        - Account
+      parameters:
+        - name: userId
+          in: path
+          description: User id
+          required: true
+          schema:
+            type: integer
+            example: 1
+        - name: operation
+          in: query
+          description: Operation to be applied over user related account
+          required: true
+          schema:
+            type: string
+            enum:
+              - deposit
+              - payment
+            example: deposit
+        - name: amount
+          in: query
+          description: The amount by which the balance will need to be either increased or decreased within the transaction
+          required: true
+          schema:
+            type: number
+            format: double
+            example: 10000.00
+      responses:
+        '200':
+          $ref: '#/components/responses/Successful'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  responses:
+    Successful:
+      description: Successful response
+      content:
+        application/json:
+          schema:
+            type: number
+            format: float
+            example: 10000.00
+    InternalError:
+      description: Internal error response
+      content:
+        application/json:
+          schema:
+            type: string
