@@ -17,9 +17,9 @@ openApiGenerate {
 	inputSpec.set("$rootDir/pay-api-spec.yaml")
 	outputDir.set("$projectDir/build/generated")
 	ignoreFileOverride.set("$rootDir/.openapi-generator-java-sources.ignore")
-	modelPackage.set("ru.ya.sprint7pw.client.domain")
-	invokerPackage.set("ru.ya.sprint7pw.client")
-	apiPackage.set("ru.ya.sprint7pw.client.api")
+	modelPackage.set("ru.yp.sprint7pw.client.domain")
+	invokerPackage.set("ru.yp.sprint7pw.client")
+	apiPackage.set("ru.yp.sprint7pw.client.api")
 	configOptions.set([
 			hideGenerationTimestamp: "true",
 			library                : "webclient",

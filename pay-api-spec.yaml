@@ -13,6 +13,7 @@ paths:
   /api/accounts/{userId}:
     get:
       summary: Get current balance
+      operationId: getBalance
       tags:
         - Account
       parameters:
@@ -30,6 +31,7 @@ paths:
       summary: Execute operation like deposit or payment
       tags:
         - Account
+      operationId: updateBalance
       parameters:
         - name: userId
           in: path
