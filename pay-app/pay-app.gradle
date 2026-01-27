@@ -4,6 +4,36 @@ plugins {
 
 description = 'Practical work for yp - sprint 7: Pay App.'
 
+openApiGenerate {
+	generatorName.set("spring")
+	inputSpec.set("$rootDir/pay-api-spec.yaml")
+	outputDir.set("$projectDir/build/generated")
+	ignoreFileOverride.set("$rootDir/.openapi-generator-java-sources.ignore")
+	modelPackage.set("ru.ya.sprint7pw.controller.dto")
+	invokerPackage.set("ru.ya.sprint7pw")
+	apiPackage.set("ru.ya.sprint7pw.controller")
+	configOptions.set([
+			hideGenerationTimestamp: "true",
+			requestMappingMode: "controller",
+			interfaceOnly: "false",
+			library: "spring-boot",
+			reactive: "true",
+			useSpringBoot3: "true",
+			useJakartaEe: "true",
+			useTags: "true",
+			dateLibrary: "java8",
+			openApiNullable: "false",
+			serializableModel: "true",
+			returnSuccessCode: "true"
+	])
+}
+
+sourceSets.main.java.srcDir "$projectDir/build/generated/src/main/java"
+
+tasks.named('compileJava') {
+	dependsOn(tasks.openApiGenerate)
+}
+
 bootJar {
 	destinationDirectory = file('../docker-compose/pay-app')
 	launchScript()
