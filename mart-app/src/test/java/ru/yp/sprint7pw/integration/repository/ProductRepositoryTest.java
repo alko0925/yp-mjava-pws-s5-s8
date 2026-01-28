@@ -4,7 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.yp.sprint7pw.MyMarketApplicationTest;
+import ru.yp.sprint7pw.MartApplicationTest;
 import ru.yp.sprint7pw.model.Product;
 import ru.yp.sprint7pw.repository.ProductRepository;
 
@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ProductRepositoryTest extends MyMarketApplicationTest {
+public class ProductRepositoryTest extends MartApplicationTest {
 
     @Autowired
     private ProductRepository productRepository;

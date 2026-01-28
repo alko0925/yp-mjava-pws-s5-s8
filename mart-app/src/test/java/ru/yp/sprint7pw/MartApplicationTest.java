@@ -12,5 +12,5 @@ import ru.yp.sprint7pw.config.PostgreSQLTestcontainer;
 @Testcontainers
 @ImportTestcontainers(PostgreSQLTestcontainer.class)
 @AutoConfigureWebTestClient
-public class MyMarketApplicationTest {
+public class MartApplicationTest {
 }

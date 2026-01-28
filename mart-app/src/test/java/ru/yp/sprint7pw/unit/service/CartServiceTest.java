@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.yp.sprint7pw.MyMarketApplicationTest;
+import ru.yp.sprint7pw.MartApplicationTest;
 import ru.yp.sprint7pw.model.Cart;
 import ru.yp.sprint7pw.model.CartProduct;
 import ru.yp.sprint7pw.model.Product;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-class CartServiceTest extends MyMarketApplicationTest {
+class CartServiceTest extends MartApplicationTest {
 
     @MockitoBean
     private CartRepository cartRepository;

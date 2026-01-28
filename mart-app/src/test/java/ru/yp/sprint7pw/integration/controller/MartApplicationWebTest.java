@@ -4,13 +4,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import ru.yp.sprint7pw.MyMarketApplicationTest;
+import ru.yp.sprint7pw.MartApplicationTest;
 import ru.yp.sprint7pw.model.Cart;
 import ru.yp.sprint7pw.model.Order;
 import ru.yp.sprint7pw.model.Product;
 import ru.yp.sprint7pw.repository.*;
 
-public class MyMarketApplicationWebTest extends MyMarketApplicationTest {
+public class MartApplicationWebTest extends MartApplicationTest {
     @Autowired
     protected WebTestClient webTestClient;
 

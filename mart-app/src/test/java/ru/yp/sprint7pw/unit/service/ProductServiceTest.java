@@ -7,7 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import ru.yp.sprint7pw.MyMarketApplicationTest;
+import ru.yp.sprint7pw.MartApplicationTest;
 import ru.yp.sprint7pw.model.Product;
 import ru.yp.sprint7pw.repository.ProductRepository;
 import ru.yp.sprint7pw.service.ProductService;
@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
-public class ProductServiceTest extends MyMarketApplicationTest {
+public class ProductServiceTest extends MartApplicationTest {
 
     @MockitoBean
     private ProductRepository productRepository;

@@ -3,7 +3,7 @@ package ru.yp.sprint7pw.integration.controller;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-public class OrderControllerIntegrationTest extends MyMarketApplicationWebTest {
+public class OrderControllerIntegrationTest extends MartApplicationWebTest {
     @Test
     void getOrders_returnsViewOrders() throws Exception {
         webTestClient.get()

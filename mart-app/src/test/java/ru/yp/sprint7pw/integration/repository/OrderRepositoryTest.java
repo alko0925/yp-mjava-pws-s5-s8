@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
-import ru.yp.sprint7pw.MyMarketApplicationTest;
+import ru.yp.sprint7pw.MartApplicationTest;
 import ru.yp.sprint7pw.model.Order;
 import ru.yp.sprint7pw.repository.OrderProductRepository;
 import ru.yp.sprint7pw.repository.OrderRepository;
@@ -14,7 +14,7 @@ import ru.yp.sprint7pw.repository.ProductRepository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class OrderRepositoryTest extends MyMarketApplicationTest {
+public class OrderRepositoryTest extends MartApplicationTest {
 
     @Autowired
     private OrderRepository orderRepository;

@@ -6,7 +6,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 
-public class CartControllerIntegrationTest extends MyMarketApplicationWebTest {
+public class CartControllerIntegrationTest extends MartApplicationWebTest {
 
     @Test
     void getItems_returnsViewCart() throws Exception {

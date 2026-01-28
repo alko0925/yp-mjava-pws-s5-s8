@@ -2,7 +2,7 @@ package ru.yp.sprint7pw.integration.controller;
 
 import org.junit.jupiter.api.Test;
 
-public class RootControllerIntegrationTest extends MyMarketApplicationWebTest {
+public class RootControllerIntegrationTest extends MartApplicationWebTest {
 
     @Test
     void getItems_returnsRedirectionToItems() throws Exception {
