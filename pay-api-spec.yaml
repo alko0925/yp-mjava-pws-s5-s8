@@ -61,8 +61,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Successful'
-        '500':
-          $ref: '#/components/responses/InternalError'
 components:
   responses:
     Successful:
@@ -71,11 +69,5 @@ components:
         application/json:
           schema:
             type: number
-            format: float
+            format: double
             example: 10000.00
-    InternalError:
-      description: Internal error response
-      content:
-        application/json:
-          schema:
-            type: string
