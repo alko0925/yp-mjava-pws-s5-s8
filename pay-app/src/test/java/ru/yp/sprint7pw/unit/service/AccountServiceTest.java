@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint7pw.PayApplicationTest;
@@ -21,9 +20,6 @@ import static org.mockito.Mockito.*;
 
 
 public class AccountServiceTest extends PayApplicationTest {
-
-    @MockitoBean
-    private CommandLineRunner commandLineRunner;
 
     @MockitoBean
     private UserRepository userRepository;
