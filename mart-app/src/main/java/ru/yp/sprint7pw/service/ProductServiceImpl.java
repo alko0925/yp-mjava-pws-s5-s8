@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
         int offset = (pageNumber - 1) * pageSize;
         int limit = pageSize;
 
-        Flux<Product> products = switch (SortType.valueOf(sort)) {
+        Flux<Product> products = switch (ServiceConstants.SortType.valueOf(sort)) {
             case NO -> productRepository.findProductsByCriterias(search, offset, limit);
             case ALPHA -> productRepository.findProductsByCriteriasOrderByTitle(search, offset, limit);
             case PRICE -> productRepository.findProductsByCriteriasOrderByPrice(search, offset, limit);

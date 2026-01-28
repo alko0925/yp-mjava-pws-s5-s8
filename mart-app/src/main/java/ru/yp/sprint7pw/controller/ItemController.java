@@ -38,7 +38,7 @@ public class ItemController {
                                     @Value("${page.layout.rowsize}") Integer pageRowSize) {
 
         return productService.getProducts(search, sort, pageNumber, pageSize)
-                .zipWith(cartService.getCartByUserId(1))
+                .zipWith(cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID))
                 .map(tuple -> {
                     List<List<ItemDto>> items = new ArrayList<>();
                     List<ItemDto> itemsInner = new ArrayList<>();
@@ -94,10 +94,10 @@ public class ItemController {
                 .flatMap(tuple -> {
                     MultiValueMap<String, String> map = tuple.getT1();
                     Product p = tuple.getT2();
-                    if (ActionType.MINUS.toString().equals(map.getFirst("action")))
-                        return cartService.decreaseProductCount(1, p);
+                    if (ControllerConstants.ActionType.MINUS.toString().equals(map.getFirst("action")))
+                        return cartService.decreaseProductCount(ControllerConstants.DEFAULT_USER_ID, p);
                     else
-                        return cartService.increaseProductCount(1, p);
+                        return cartService.increaseProductCount(ControllerConstants.DEFAULT_USER_ID, p);
                 }).then(swe.getFormData()).map(map -> {
                     return "redirect:/items?search=" +
                             map.getFirst("search") +
@@ -114,7 +114,7 @@ public class ItemController {
     public Mono<Rendering> getItem(@PathVariable("item_id") Integer item_id) {
 
         return productService.getProduct(item_id)
-                .zipWith(cartService.getCartByUserId(1))
+                .zipWith(cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID))
                 .map(tuple -> {
                     Product p = tuple.getT1();
                     Cart cart = tuple.getT2();
@@ -147,10 +147,10 @@ public class ItemController {
                         tuple -> {
                             Product p = tuple.getT1();
                             MultiValueMap<String, String> map = tuple.getT2();
-                            if (ActionType.MINUS.toString().equals(map.getFirst("action")))
-                                return cartService.decreaseProductCount(1, p);
+                            if (ControllerConstants.ActionType.MINUS.toString().equals(map.getFirst("action")))
+                                return cartService.decreaseProductCount(ControllerConstants.DEFAULT_USER_ID, p);
                             else
-                                return cartService.increaseProductCount(1, p);
+                                return cartService.increaseProductCount(ControllerConstants.DEFAULT_USER_ID, p);
                         }
                 ).thenReturn("redirect:/items/" +
                         item_id);

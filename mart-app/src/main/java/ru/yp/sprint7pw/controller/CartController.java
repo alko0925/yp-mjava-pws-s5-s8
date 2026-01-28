@@ -30,7 +30,7 @@ public class CartController {
     @GetMapping(value = "/items")
     public Mono<Rendering> getItems() {
 
-        return cartService.getCartByUserId(1)
+        return cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID)
                 .map(cart -> {
                     List<ItemDto> items = new ArrayList<>();
                     Long total = 0L;
@@ -66,10 +66,10 @@ public class CartController {
                             MultiValueMap<String, String> map = tuple.getT1();
                             Product p = tuple.getT2();
 
-                            return switch (ActionType.valueOf(map.getFirst("action"))) {
-                                case MINUS -> cartService.decreaseProductCount(1, p);
-                                case PLUS -> cartService.increaseProductCount(1, p);
-                                case DELETE -> cartService.deleteProduct(1, p);
+                            return switch (ControllerConstants.ActionType.valueOf(map.getFirst("action"))) {
+                                case MINUS -> cartService.decreaseProductCount(ControllerConstants.DEFAULT_USER_ID, p);
+                                case PLUS -> cartService.increaseProductCount(ControllerConstants.DEFAULT_USER_ID, p);
+                                case DELETE -> cartService.deleteProduct(ControllerConstants.DEFAULT_USER_ID, p);
                             };
                         }
                 ).thenReturn("redirect:/cart/items");

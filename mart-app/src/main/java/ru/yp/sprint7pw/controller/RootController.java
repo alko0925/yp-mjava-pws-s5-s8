@@ -41,13 +41,13 @@ public class RootController {
 
     @PostMapping(value = "/buy")
     public Mono<String> submitOrder() {
-        return cartService.getCartByUserId(1)
+        return cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID)
                 .flatMap(cart -> {
                     if (cart.getId() != null) return orderService.create(cart);
                     else return Mono.empty();
                 })
                 .switchIfEmpty(Mono.error(new NoSuchElementException("Cart not found")))
-                .zipWith(cartService.getCartByUserId(1)
+                .zipWith(cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID)
                         .flatMap(cartService::delete)
                         .thenReturn(""))
                 .map(tuple -> "redirect:/orders/" +
