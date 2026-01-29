@@ -4,6 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import ru.yp.sprint7pw.client.ApiClient;
+import ru.yp.sprint7pw.client.api.AccountApi;
 import ru.yp.sprint7pw.model.Product;
 import ru.yp.sprint7pw.repository.ProductRepository;
 
@@ -30,5 +32,15 @@ public class MartApplication {
                     new Product("ДебагДаг", "Всегда подскажет верное решение.", "image/9s.jpg", 15000L)
             )).subscribe();
         };
+    }
+
+    @Bean
+    ApiClient apiClient() {
+        return new ApiClient();
+    }
+
+    @Bean
+    AccountApi accountApi(ApiClient apiClient) {
+        return new AccountApi(apiClient);
     }
 }
