@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import ru.yp.sprint7pw.controller.dto.BalanceResponse;
 import ru.yp.sprint7pw.service.AccountService;
 
 @RestController
@@ -17,14 +18,14 @@ public class AccountController implements AccountApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Double>> getBalance(Integer userId, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<BalanceResponse>> getBalance(Integer userId, ServerWebExchange exchange) {
         return accountService.getBalanceByUserId(userId)
-                .map(balance -> ResponseEntity.ok().body(balance));
+                .map(balance -> ResponseEntity.ok().body(new BalanceResponse().balance(balance)));
     }
 
     @Override
-    public Mono<ResponseEntity<Double>> updateBalance(Integer userId, String operation, Double amount, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<BalanceResponse>> updateBalance(Integer userId, String operation, Double amount, ServerWebExchange exchange) {
         return accountService.updateBalanceByUserId(userId, operation, amount)
-                .map(balance -> ResponseEntity.ok().body(balance));
+                .map(balance -> ResponseEntity.ok().body(new BalanceResponse().balance(balance)));
     }
 }

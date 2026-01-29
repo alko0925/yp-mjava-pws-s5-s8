@@ -19,7 +19,7 @@ public class AccountControllerIntegrationTest extends PayApplicationWebTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("$").isEqualTo(10000);
+                .jsonPath("$.balance").isEqualTo(10000);
     }
 
     @Test
@@ -36,6 +36,6 @@ public class AccountControllerIntegrationTest extends PayApplicationWebTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("$").isEqualTo(11000);
+                .jsonPath("$.balance").isEqualTo(11000);
     }
 }

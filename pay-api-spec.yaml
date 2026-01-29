@@ -26,7 +26,11 @@ paths:
             example: 1
       responses:
         '200':
-          $ref: '#/components/responses/Successful'
+          $ref: '#/components/responses/SuccessfulResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
     put:
       summary: Execute operation like deposit or payment
       tags:
@@ -60,14 +64,43 @@ paths:
             example: 10000.00
       responses:
         '200':
-          $ref: '#/components/responses/Successful'
+          $ref: '#/components/responses/SuccessfulResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
 components:
   responses:
-    Successful:
+    SuccessfulResponse:
       description: Successful response
       content:
         application/json:
           schema:
-            type: number
-            format: double
-            example: 10000.00
+            $ref: '#/components/schemas/BalanceResponse'
+    ErrorResponse:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    BalanceResponse:
+      type: object
+      properties:
+        balance:
+          type: number
+          format: double
+          example: 10000.00
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: NOT_FOUND
+        message:
+          type: string
+          example: User not found
+        timestamp:
+          type: string
+          format: date-time
+          example: 2026-01-01T00:00:00Z
