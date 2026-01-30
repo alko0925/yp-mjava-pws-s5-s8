@@ -1,15 +1,35 @@
 package ru.yp.sprint7pw.integration.controller;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Mono;
+import ru.yp.sprint7pw.client.PaymentServiceClient;
+import ru.yp.sprint7pw.client.domain.BalanceResponse;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.reset;
 
 public class CartControllerIntegrationTest extends MartApplicationWebTest {
 
+    @MockitoBean
+    private PaymentServiceClient paymentServiceClient;
+
+    @BeforeEach
+    void resetMocks() {
+        reset(paymentServiceClient);
+    }
+
     @Test
     void getItems_returnsViewCart() throws Exception {
+
+        doReturn(Mono.just(new BalanceResponse().balance(20000D))).when(paymentServiceClient).getBalance(Mockito.any());
+
         webTestClient.get()
                 .uri("/cart/items")
                 .exchange()
@@ -24,7 +44,6 @@ public class CartControllerIntegrationTest extends MartApplicationWebTest {
                     assert html.contains("<span class=\"badge text-bg-success justify-content-end\">2000 руб.</span>");
                     assert html.contains("<span>4</span>");
                     assert html.contains("<h2>Итого: 10000 руб.</h2>");
-
                 });
     }
 
