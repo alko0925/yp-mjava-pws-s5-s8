@@ -22,7 +22,6 @@ services:
     ports:
       - "6379:6379"
     restart: always
-    environment:
     depends_on:
       - yp-db
 
@@ -36,12 +35,33 @@ services:
     depends_on:
       - yp-redis
       
-  yp-app:
-    container_name: yp-app
+  yp-mart-app:
+    container_name: yp-mart-app
     build:
-      context: ./docker-compose/app
+      context: ./docker-compose/mart-app
       dockerfile: Dockerfile
-    image: yp-app
+    image: yp-mart-app
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=yp_user
+      - POSTGRES_PASSWORD=yp_pwd
+      - DB_HOST=yp-db
+      - DB_PORT=5432
+      - DB_NAME=yp_db
+      - REDIS_HOST=yp-redis
+      - REDIS_PORT=6379
+#      - spring.profiles.active=isolation
+    ports:
+      - "8080:8080"
+    depends_on:
+      - yp-pgadmin
+      
+  yp-pay-app:
+    container_name: yp-pay-app
+    build:
+      context: ./docker-compose/pay-app
+      dockerfile: Dockerfile
+    image: yp-pay-app
     restart: on-failure
     environment:
       - POSTGRES_USER=yp_user
@@ -51,7 +71,7 @@ services:
       - DB_NAME=yp_db
 #      - spring.profiles.active=isolation
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - yp-pgadmin
       
@@ -64,4 +84,4 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - yp-app
+      - yp-mart-app

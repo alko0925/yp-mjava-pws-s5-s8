@@ -1,12 +1,14 @@
 package ru.yp.sprint7pw.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint7pw.controller.dto.BalanceResponse;
 import ru.yp.sprint7pw.service.AccountService;
 
+@CrossOrigin
 @RestController
 public class AccountController implements AccountApi {
 

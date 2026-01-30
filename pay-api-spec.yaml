@@ -7,7 +7,7 @@ tags:
   - name: Account
     description: Account operations
 servers:
-  - url: http://localhost:8081
+  - url: http://yp-pay-app:8081
     description: Dev server
 paths:
   /api/accounts/{userId}:
