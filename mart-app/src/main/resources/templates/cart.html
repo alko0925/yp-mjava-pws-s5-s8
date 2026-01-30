@@ -9,6 +9,12 @@
 </head>
 
 <body class="bg-light">
+
+<div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${failedPayment}">
+    Payment is failed &#128557;
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
     <div class="container p-2">
         <div class="row p-2">
             <div class="col">
@@ -49,8 +55,11 @@
                 <form action="/buy" method="post" th:if="${!items.isEmpty()}">
                     <div class="hstack gap-3">
                         <h2 th:text="'Итого: '+${total}+' руб.'"/>
-                        <button class="btn btn-warning ms-auto">Купить</button>
+                        <button class="btn btn-secondary ms-auto" th:if="${!#strings.isEmpty(paymentErrorMsg)}" disabled>Купить</button>
+                        <button class="btn btn-warning ms-auto" th:if="${#strings.isEmpty(paymentErrorMsg)}">Купить</button>
                     </div>
+                    <div style="font-size: 20px; color: red;"><span th:text="${paymentErrorMsg}"></span></div>
+
                 </form>
             </div>
         </div>
