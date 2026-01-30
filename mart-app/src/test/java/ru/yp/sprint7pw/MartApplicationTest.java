@@ -6,11 +6,12 @@ import org.springframework.boot.testcontainers.context.ImportTestcontainers;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import ru.yp.sprint7pw.config.PostgreSQLTestcontainer;
+import ru.yp.sprint7pw.config.RedisTestcontainer;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
-@ImportTestcontainers(PostgreSQLTestcontainer.class)
+@ImportTestcontainers({PostgreSQLTestcontainer.class, RedisTestcontainer.class})
 @AutoConfigureWebTestClient
 public class MartApplicationTest {
 }

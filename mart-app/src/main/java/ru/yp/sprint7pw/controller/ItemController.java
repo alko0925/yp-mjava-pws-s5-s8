@@ -37,7 +37,8 @@ public class ItemController {
                                     @RequestParam(defaultValue = "5") Integer pageSize,
                                     @Value("${page.layout.rowsize}") Integer pageRowSize) {
 
-        return productService.getProducts(search, sort, pageNumber, pageSize)
+        return productService.getProductsCacheable(search + "_" + sort + "_" + pageNumber + "_" + pageSize,
+                        search, sort, pageNumber, pageSize)
                 .zipWith(cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID))
                 .map(tuple -> {
                     List<List<ItemDto>> items = new ArrayList<>();
@@ -88,7 +89,7 @@ public class ItemController {
     public Mono<String> applyActionToItems(ServerWebExchange swe) {
 
         Mono<MultiValueMap<String, String>> fd = swe.getFormData();
-        Mono<Product> product = fd.flatMap(map -> productService.getProduct(Integer.parseInt(map.getFirst("id"))));
+        Mono<Product> product = fd.flatMap(map -> productService.getProductCacheable(map.getFirst("id"), Integer.parseInt(map.getFirst("id"))));
 
         return Mono.zip(fd, product)
                 .flatMap(tuple -> {
@@ -113,7 +114,7 @@ public class ItemController {
     @GetMapping(value = "/{item_id}")
     public Mono<Rendering> getItem(@PathVariable("item_id") Integer item_id) {
 
-        return productService.getProduct(item_id)
+        return productService.getProductCacheable(item_id.toString(), item_id)
                 .zipWith(cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID))
                 .map(tuple -> {
                     Product p = tuple.getT1();
@@ -141,7 +142,7 @@ public class ItemController {
     public Mono<String> applyActionToItem(@PathVariable("item_id") Integer item_id,
                                           ServerWebExchange swe) {
 
-        return productService.getProduct(item_id)
+        return productService.getProductCacheable(item_id.toString(), item_id)
                 .zipWith(swe.getFormData())
                 .flatMap(
                         tuple -> {

@@ -97,7 +97,7 @@ public class CartController {
     public Mono<String> applyActionToItem(ServerWebExchange swe) {
 
         Mono<MultiValueMap<String, String>> fd = swe.getFormData();
-        Mono<Product> product = fd.flatMap(map -> productService.getProduct(Integer.parseInt(map.getFirst("id"))));
+        Mono<Product> product = fd.flatMap(map -> productService.getProductCacheable(map.getFirst("id"), Integer.parseInt(map.getFirst("id"))));
 
         return Mono.zip(fd, product)
                 .flatMap(tuple -> {

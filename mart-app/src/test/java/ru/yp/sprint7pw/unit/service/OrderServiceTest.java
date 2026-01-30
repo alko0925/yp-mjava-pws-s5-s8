@@ -101,9 +101,9 @@ public class OrderServiceTest extends MartApplicationTest {
         doReturn(Flux.fromIterable(orders)).when(orderRepository).findAll();
         doReturn(Flux.fromIterable(o1_orderProducts)).when(orderProductRepository).findAllById(List.of(o1.getId()));
         doReturn(Flux.fromIterable(o2_orderProducts)).when(orderProductRepository).findAllById(List.of(o2.getId()));
-        doReturn(Mono.just(p1)).when(productService).getProduct(op1.getProductId());
-        doReturn(Mono.just(p2)).when(productService).getProduct(op2.getProductId());
-        doReturn(Mono.just(p3)).when(productService).getProduct(op3.getProductId());
+        doReturn(Mono.just(p1)).when(productService).getProductCacheable(op1.getProductId().toString(), op1.getProductId());
+        doReturn(Mono.just(p2)).when(productService).getProductCacheable(op2.getProductId().toString(), op2.getProductId());
+        doReturn(Mono.just(p3)).when(productService).getProductCacheable(op3.getProductId().toString(), op3.getProductId());
 
         List<Order> result = orderService.getAllOrders().block();
 
@@ -115,9 +115,9 @@ public class OrderServiceTest extends MartApplicationTest {
         verify(orderRepository, times(1)).findAll();
         verify(orderProductRepository, times(1)).findAllById(List.of(o1.getId()));
         verify(orderProductRepository, times(1)).findAllById(List.of(o2.getId()));
-        verify(productService, times(1)).getProduct(op1.getProductId());
-        verify(productService, times(1)).getProduct(op2.getProductId());
-        verify(productService, times(1)).getProduct(op3.getProductId());
+        verify(productService, times(1)).getProductCacheable(op1.getProductId().toString(), op1.getProductId());
+        verify(productService, times(1)).getProductCacheable(op2.getProductId().toString(), op2.getProductId());
+        verify(productService, times(1)).getProductCacheable(op3.getProductId().toString(), op3.getProductId());
     }
 
     @Test
@@ -159,8 +159,8 @@ public class OrderServiceTest extends MartApplicationTest {
 
         doReturn(Mono.just(order)).when(orderRepository).findById(orderId);
         doReturn(Flux.fromIterable(o1_orderProducts)).when(orderProductRepository).findAllById(List.of(order.getId()));
-        doReturn(Mono.just(p1)).when(productService).getProduct(op1.getProductId());
-        doReturn(Mono.just(p2)).when(productService).getProduct(op2.getProductId());
+        doReturn(Mono.just(p1)).when(productService).getProductCacheable(op1.getProductId().toString(), op1.getProductId());
+        doReturn(Mono.just(p2)).when(productService).getProductCacheable(op2.getProductId().toString(), op2.getProductId());
 
         Order result = orderService.getOrder(orderId).block();
 
@@ -170,7 +170,7 @@ public class OrderServiceTest extends MartApplicationTest {
 
         verify(orderRepository, times(1)).findById(orderId);
         verify(orderProductRepository, times(1)).findAllById(List.of(order.getId()));
-        verify(productService, times(1)).getProduct(op1.getProductId());
-        verify(productService, times(1)).getProduct(op2.getProductId());
+        verify(productService, times(1)).getProductCacheable(op1.getProductId().toString(), op1.getProductId());
+        verify(productService, times(1)).getProductCacheable(op2.getProductId().toString(), op2.getProductId());
     }
 }

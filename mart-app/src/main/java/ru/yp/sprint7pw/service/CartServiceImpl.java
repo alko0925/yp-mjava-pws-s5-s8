@@ -46,7 +46,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Mono<CartProduct> setProductToCartProduct(CartProduct cartProduct) {
-        return productService.getProduct(cartProduct.getProductId())
+        return productService.getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId())
                 .map(p -> {
                     cartProduct.setProduct(p);
                     return cartProduct;

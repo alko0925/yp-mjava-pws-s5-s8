@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Mono<OrderProduct> setProductToOrderProduct(OrderProduct orderProduct) {
-        return productService.getProduct(orderProduct.getProductId())
+        return productService.getProductCacheable(orderProduct.getProductId().toString() ,orderProduct.getProductId())
                 .map(p -> {
                     orderProduct.setProduct(p);
                     return orderProduct;

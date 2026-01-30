@@ -1,5 +1,8 @@
 package ru.yp.sprint7pw.service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
@@ -24,6 +27,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Flux<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    @Override
+    @Cacheable(value = "page", key = "#name")
+    public Mono<Page> getProductsCacheable(String name, String search, String sort, Integer pageNumber, Integer pageSize) {
+        return getProducts(search, sort, pageNumber, pageSize);
     }
 
     @Override
@@ -81,6 +90,12 @@ public class ProductServiceImpl implements ProductService {
                 );
     }
 
+    @Cacheable(value = "product", key = "#name")
+    @Override
+    public Mono<Product> getProductCacheable(String name, Integer itemId) {
+        return getProduct(itemId);
+    }
+
     @Override
     public Mono<Product> getProduct(Integer itemId) {
         return productRepository.findById(itemId)
@@ -95,5 +110,20 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Mono<Product> update(Product product) {
         return productRepository.save(product);
+    }
+
+    @Override
+    @CacheEvict(value = {"page", "product"}, allEntries = true)
+    public Mono<Void> clearCaches() {
+        return Mono.empty();
+    }
+
+    @Override
+    @Caching(evict = {
+            @CacheEvict(value = "page", allEntries = true),
+            @CacheEvict(cacheNames="product", key="#name")
+    })
+    public Mono<Void> clearCaches(String name) {
+        return Mono.empty();
     }
 }

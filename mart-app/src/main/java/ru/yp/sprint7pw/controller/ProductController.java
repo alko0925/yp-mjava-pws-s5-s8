@@ -37,7 +37,8 @@ public class ProductController {
     public Mono<String> addProduct(@ModelAttribute("product") Product product,
                                    @RequestPart("image") FilePart image) {
 
-        return productService.create(product)
+        return productService.clearCaches()
+                .then(productService.create(product))
                 .flatMap(p -> {
                     p.setImgPath("product/image/" + p.getId() + "_" + image.filename());
                     return productService.update(p);

@@ -64,7 +64,7 @@ class CartServiceTest extends MartApplicationTest {
 
         doReturn(Mono.just(cart)).when(cartRepository).findCartByUserId(userId);
         doReturn(Flux.fromIterable(cartProducts)).when(cartProductRepository).findAllById(List.of(cart.getId()));
-        doReturn(Mono.just(product)).when(productService).getProduct(cartProduct.getProductId());
+        doReturn(Mono.just(product)).when(productService).getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId());
 
         Cart resultCart = cartService.getCartByUserId(userId).block();
 
@@ -73,7 +73,7 @@ class CartServiceTest extends MartApplicationTest {
         assertEquals(userId, resultCart.getUserId(), "Wrong cart was retrieved");
         verify(cartRepository, times(1)).findCartByUserId(userId);
         verify(cartProductRepository, times(1)).findAllById(List.of(cart.getId()));
-        verify(productService, times(1)).getProduct(cartProduct.getProductId());
+        verify(productService, times(1)).getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId());
     }
 
     @Test
@@ -90,7 +90,7 @@ class CartServiceTest extends MartApplicationTest {
         cartProduct.setProductId(productId);
         cartProduct.setQuantity(quantity);
 
-        doReturn(Mono.just(product)).when(productService).getProduct(cartProduct.getProductId());
+        doReturn(Mono.just(product)).when(productService).getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId());
 
         CartProduct result = cartService.setProductToCartProduct(cartProduct).block();
 
@@ -98,7 +98,7 @@ class CartServiceTest extends MartApplicationTest {
 
         assertEquals(cartId, result.getCartId(), "Wrong cartProduct was retrieved");
         assertEquals(productId, result.getProduct().getId(), "Wrong product was retrieved");
-        verify(productService, times(1)).getProduct(cartProduct.getProductId());
+        verify(productService, times(1)).getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId());
     }
 
     @Test
@@ -124,7 +124,7 @@ class CartServiceTest extends MartApplicationTest {
 
         doReturn(Mono.just(cart)).when(cartRepository).findCartByUserId(userId);
         doReturn(Flux.fromIterable(cartProducts)).when(cartProductRepository).findAllById(List.of(cart.getId()));
-        doReturn(Mono.just(product)).when(productService).getProduct(cartProduct.getProductId());
+        doReturn(Mono.just(product)).when(productService).getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId());
 
         doAnswer(invocation -> {
             cartProduct.setQuantity(cartProduct.getQuantity() - 1);
@@ -137,7 +137,7 @@ class CartServiceTest extends MartApplicationTest {
 
         verify(cartRepository, times(2)).findCartByUserId(userId);
         verify(cartProductRepository, times(2)).findAllById(List.of(cart.getId()));
-        verify(productService, times(2)).getProduct(cartProduct.getProductId());
+        verify(productService, times(2)).getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId());
         verify(cartProductRepository, times(1)).saveByCartIdAndProductId(cartProduct.getCartId(), cartProduct.getProductId(), (cartProduct.getQuantity()));
     }
 
@@ -164,7 +164,7 @@ class CartServiceTest extends MartApplicationTest {
 
         doReturn(Mono.just(cart)).when(cartRepository).findCartByUserId(userId);
         doReturn(Flux.fromIterable(cartProducts)).when(cartProductRepository).findAllById(List.of(cart.getId()));
-        doReturn(Mono.just(product)).when(productService).getProduct(cartProduct.getProductId());
+        doReturn(Mono.just(product)).when(productService).getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId());
 
         doAnswer(invocation -> {
             cartProduct.setQuantity(cartProduct.getQuantity() + 1);
@@ -177,7 +177,7 @@ class CartServiceTest extends MartApplicationTest {
 
         verify(cartRepository, times(2)).findCartByUserId(userId);
         verify(cartProductRepository, times(2)).findAllById(List.of(cart.getId()));
-        verify(productService, times(2)).getProduct(cartProduct.getProductId());
+        verify(productService, times(2)).getProductCacheable(cartProduct.getProductId().toString(), cartProduct.getProductId());
         verify(cartProductRepository, times(1)).saveByCartIdAndProductId(cartProduct.getCartId(), cartProduct.getProductId(), (cartProduct.getQuantity()));
     }
 
@@ -214,8 +214,8 @@ class CartServiceTest extends MartApplicationTest {
 
         doReturn(Mono.just(cart)).when(cartRepository).findCartByUserId(userId);
         doReturn(Flux.fromIterable(cartProducts)).when(cartProductRepository).findAllById(List.of(cart.getId()));
-        doReturn(Mono.just(p1)).when(productService).getProduct(cp1.getProductId());
-        doReturn(Mono.just(p2)).when(productService).getProduct(cp2.getProductId());
+        doReturn(Mono.just(p1)).when(productService).getProductCacheable(cp1.getProductId().toString(), cp1.getProductId());
+        doReturn(Mono.just(p2)).when(productService).getProductCacheable(cp2.getProductId().toString(), cp2.getProductId());
 
         doAnswer(invocation -> {
             cartProducts.remove(cp1);
