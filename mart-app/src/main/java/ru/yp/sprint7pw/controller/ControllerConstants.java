@@ -6,4 +6,8 @@ public class ControllerConstants {
     public enum ActionType {
         MINUS, PLUS, DELETE
     }
+
+    public enum OperationType {
+        DEPOSIT, PAYMENT;
+    }
 }
