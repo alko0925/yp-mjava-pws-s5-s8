@@ -1,16 +1,15 @@
 package ru.yp.sprint7pw.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.reactive.result.view.Rendering;
 import reactor.core.publisher.Mono;
 import ru.yp.sprint7pw.client.PaymentServiceClient;
 import ru.yp.sprint7pw.client.domain.BalanceResponse;
 import ru.yp.sprint7pw.client.domain.ErrorResponse;
+import ru.yp.sprint7pw.controller.dto.BalanceDto;
 import ru.yp.sprint7pw.model.Order;
 import ru.yp.sprint7pw.service.CartService;
 import ru.yp.sprint7pw.service.OrderService;
@@ -93,5 +92,60 @@ public class RootController {
                         })
                         .thenReturn(""))
                 .map(s -> s + redirectPath.toString());
+    }
+
+    @GetMapping(value = "/balance/check")
+    public Mono<Rendering> getBalance(@RequestParam(defaultValue = "") String topUpStatus) {
+
+        StringBuilder balanceErrorMsg = new StringBuilder();
+        return paymentServiceClient.getBalance(ControllerConstants.DEFAULT_USER_ID)
+                .onErrorResume(error -> {
+                    balanceErrorMsg.append("Error during attempt to get current balance.");
+                    if (error instanceof WebClientRequestException wc_req_ex) {
+                        balanceErrorMsg.append(" Details: ").append(wc_req_ex.getMessage());
+                    } else if (error instanceof WebClientResponseException wc_res_ex) {
+                        try {
+                            ErrorResponse errorResponse = wc_res_ex.getResponseBodyAs(ErrorResponse.class);
+                            if (errorResponse != null)
+                                balanceErrorMsg.append(" Details: ").append(errorResponse.getMessage());
+                        } catch (Exception ignored) {
+                        }
+                    }
+                    return Mono.just(new BalanceResponse().balance(-1D));
+                })
+                .map(br -> {
+                    return Rendering.view("check-balance")
+                            .modelAttribute("balance", new BalanceDto(br.getBalance(), 0D))
+                            .modelAttribute("topUpStatus", topUpStatus)
+                            .modelAttribute("balanceErrorMsg", balanceErrorMsg.toString())
+                            .build();
+                });
+    }
+
+    @PostMapping(value = "/balance/topup")
+    public Mono<String> topUpBalance(@ModelAttribute("balance") BalanceDto balance) {
+
+        StringBuilder topUpStatus = new StringBuilder();
+        StringBuilder redirectPath = new StringBuilder();
+
+        return paymentServiceClient.updateBalance(ControllerConstants.DEFAULT_USER_ID, ControllerConstants.OperationType.DEPOSIT.toString(), balance.getTopUpValue())
+                .onErrorResume(error -> {
+                    topUpStatus.append("Top up is not possible at this moment.");
+                    if (error instanceof WebClientRequestException wc_req_ex) {
+                        topUpStatus.append(" Details: ").append(wc_req_ex.getMessage());
+                    } else if (error instanceof WebClientResponseException wc_res_ex) {
+                        try {
+                            ErrorResponse errorResponse = wc_res_ex.getResponseBodyAs(ErrorResponse.class);
+                            if (errorResponse != null)
+                                topUpStatus.append(" Details: ").append(errorResponse.getMessage());
+                        } catch (Exception ignored) {
+                        }
+                    }
+                    return Mono.just(new BalanceResponse().balance(-1D));
+                })
+                .map(br -> {
+                    if (topUpStatus.toString().isEmpty()) topUpStatus.append("Success");
+                    return redirectPath.append("redirect:/balance/check?topUpStatus=").append(topUpStatus.toString()).toString().replace(" ", "%20");
+                });
     }
 }

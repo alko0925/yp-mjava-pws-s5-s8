@@ -52,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
         if (!ServiceConstants.OperationType.isEnumContains(operation.toUpperCase()))
             return Mono.error(new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Operation: " + operation + " is not supported"));
 
-        if (account.getBalance() - amount < 0)
+        if (ServiceConstants.OperationType.PAYMENT.toString().equals(operation.toUpperCase()) && account.getBalance() - amount < 0)
             return Mono.error(new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "Insufficient funds in the balance. Current balance: " + account.getBalance() + ". Required: " + amount + "."));
 
         if (amount <= 0)

@@ -15,7 +15,6 @@ import ru.yp.sprint7pw.client.PaymentServiceClient;
 import ru.yp.sprint7pw.client.domain.BalanceResponse;
 import ru.yp.sprint7pw.client.domain.ErrorResponse;
 import ru.yp.sprint7pw.controller.dto.ItemDto;
-import ru.yp.sprint7pw.model.Cart;
 import ru.yp.sprint7pw.model.Product;
 import ru.yp.sprint7pw.service.CartService;
 import ru.yp.sprint7pw.service.ProductService;
@@ -67,9 +66,8 @@ public class CartController {
                                 });
                     } else return Mono.empty();
                 })
-                .zipWith(cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID))
-                .map(tuple -> {
-                    Cart cart = tuple.getT2();
+                .then(cartService.getCartByUserId(ControllerConstants.DEFAULT_USER_ID))
+                .map(cart -> {
                     List<ItemDto> items = new ArrayList<>();
                     Long total = 0L;
                     if (cart.getId() != null) {
