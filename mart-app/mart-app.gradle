@@ -1,0 +1,42 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+
+
+plugins {
+	id("yp-mjava-pws-s5-s8-common")
+}
+
+description = 'Practical work for yp - sprint 7: Mart App.'
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
+	testImplementation 'com.redis:testcontainers-redis:2.2.2'
+}
+
+openApiGenerate {
+	generatorName.set("java")
+	inputSpec.set("$rootDir/pay-api-spec.yaml")
+	outputDir.set("$projectDir/build/generated")
+	ignoreFileOverride.set("$rootDir/.openapi-generator-java-sources.ignore")
+	modelPackage.set("ru.yp.sprint7pw.client.domain")
+	invokerPackage.set("ru.yp.sprint7pw.client")
+	apiPackage.set("ru.yp.sprint7pw.client.api")
+	configOptions.set([
+			hideGenerationTimestamp: "true",
+			library                : "webclient",
+			useJakartaEe           : "true",
+			useTags                : "true",
+			openApiNullable        : "false",
+			serializableModel      : "true"
+	])
+}
+
+sourceSets.main.java.srcDir "$projectDir/build/generated/src/main/java"
+
+tasks.named('compileJava') {
+	dependsOn(tasks.openApiGenerate)
+}
+
+bootJar {
+	destinationDirectory = file('../docker-compose/mart-app')
+	launchScript()
+}

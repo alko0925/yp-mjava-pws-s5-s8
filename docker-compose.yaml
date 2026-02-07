@@ -13,6 +13,18 @@ services:
       - POSTGRES_PASSWORD=yp_pwd
       - POSTGRES_DB=yp_db
 
+  yp-redis:
+    container_name: yp-redis
+    build:
+      context: ./docker-compose/redis
+      dockerfile: Dockerfile
+    image: yp-redis
+    ports:
+      - "6379:6379"
+    restart: always
+    depends_on:
+      - yp-db
+
   yp-pgadmin:
     container_name: yp-pgadmin
     image: dpage/pgadmin4
@@ -21,14 +33,35 @@ services:
       - PGADMIN_DEFAULT_EMAIL=yp_user@domain.com
       - PGADMIN_DEFAULT_PASSWORD=pga_pwd
     depends_on:
-      - yp-db
+      - yp-redis
       
-  yp-app:
-    container_name: yp-app
+  yp-mart-app:
+    container_name: yp-mart-app
     build:
-      context: ./docker-compose/app
+      context: ./docker-compose/mart-app
       dockerfile: Dockerfile
-    image: yp-app
+    image: yp-mart-app
+    restart: on-failure
+    environment:
+      - POSTGRES_USER=yp_user
+      - POSTGRES_PASSWORD=yp_pwd
+      - DB_HOST=yp-db
+      - DB_PORT=5432
+      - DB_NAME=yp_db
+      - REDIS_HOST=yp-redis
+      - REDIS_PORT=6379
+#      - spring.profiles.active=isolation
+    ports:
+      - "8080:8080"
+    depends_on:
+      - yp-pgadmin
+      
+  yp-pay-app:
+    container_name: yp-pay-app
+    build:
+      context: ./docker-compose/pay-app
+      dockerfile: Dockerfile
+    image: yp-pay-app
     restart: on-failure
     environment:
       - POSTGRES_USER=yp_user
@@ -38,7 +71,7 @@ services:
       - DB_NAME=yp_db
 #      - spring.profiles.active=isolation
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - yp-pgadmin
       
@@ -51,4 +84,4 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - yp-app
+      - yp-mart-app
